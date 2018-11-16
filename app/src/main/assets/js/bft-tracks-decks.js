@@ -73,9 +73,9 @@ function androidToJSupdateLocation(trackerMessage)
 function updateTarget(message)
 {
 
-    var y = parseFloat(message[0]);
-    var x = parseFloat(message[1]);
-    y = y*(1);
+    var x = parseFloat(message[0]);
+    var y = parseFloat(message[1]);
+//    y = y*(1);
     // console.debug("x:",x);
     // console.debug("y:",y);
     var alt=message[2];
@@ -84,7 +84,7 @@ function updateTarget(message)
     var action=message[5];
     var bearing = message[3];
     var found=false;
-    console.log("Received " + message);
+    console.log("JS Received " + message);
     for (i = 0 ; i< markers.length; i++)
     {
         // console.debug("markers[i]",markers[i]._tooltip._content.valueOf());
@@ -96,9 +96,9 @@ function updateTarget(message)
 
             var marker=null;
             if (action=='FORWARD'){
-                marker = getCustomMarker(y, x, 'navigating', user, true, bearing);
+                marker = getCustomMarker(x, y, 'navigating', user, true, bearing);
             }else {
-                marker = getCustomMarker(y, x, 'standing', user, true, 0);
+                marker = getCustomMarker(x, y, 'standing', user, true, 0);
             }
 
             console.log("Adding marker: "+ user + ","+ y + ","+ x);

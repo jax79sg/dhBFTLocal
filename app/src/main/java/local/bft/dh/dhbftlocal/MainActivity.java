@@ -8,10 +8,12 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import dh.gov.sg.mq.rabbitmq.MQRabbit;
 import sg.gov.dh.trackers.Coords;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG,"Action:"+coords.getAction());
                 updateMap(coords);
                 sendCoords(coords);
+                showCoords(coords);
             }
 
             @Override
@@ -44,6 +47,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void showCoords(Coords coords) {
+        final EditText textXYZ = findViewById(R.id.textXYZ);
+        final EditText textBearing = findViewById(R.id.textBearing);
+        final EditText textAction = findViewById(R.id.textAction);
+        DecimalFormat df2dec = new DecimalFormat("###.##");
+        textXYZ.setText("XYZ: " + df2dec.format(coords.getX())+"  ,  "+df2dec.format(coords.getY())+"  ,  "+df2dec.format(coords.getAltitude()));
+        textBearing.setText("Bearing: "+df2dec.format(coords.getBearing()));
+        textAction.setText("Action: " + coords.getAction());
+
     }
 
     private void updateMap(Coords coords) {

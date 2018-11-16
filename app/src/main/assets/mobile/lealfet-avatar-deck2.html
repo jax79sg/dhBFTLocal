@@ -9,17 +9,16 @@
           crossorigin=""/>
     <script src="../leaflet/leaflet.js"
             crossorigin=""></script>
-
     <script src="../js/anglemarker-plugin.js"
-                                               crossorigin=""></script>
+            crossorigin=""></script>
 
     <script src="../js/leaflet-bft.js"
             crossorigin=""></script>
     <script src="../js/stomp.js"
             crossorigin=""></script>
 
-    <!--<script src="js/bft-tracks-decks.js"-->
-            <!--crossorigin=""></script>-->
+    <script src="../js/bft-tracks-decks.js"
+            crossorigin=""></script>
     <script src="../js/leaflet-mobile.js"
             crossorigin=""></script>
 
@@ -55,19 +54,25 @@ Deck 2 (Poop)
     // getCustomMarker(61.37*250/100,0,null,'P200',true,0).addTo(map0);
     getCustomMarker(66.16*250/100,0,null,'P220',true,0).addTo(map0);
 
-    // mqAddress=parent.document.getElementById('txtboxRabbitMQserver').value;
-    // mqUser=parent.document.getElementById('txtboxRabbitMQuser').value;
-    // mqPassword=parent.document.getElementById('txtboxRabbitMQpassword').value;
-    // mqTopic=parent.document.getElementById('txtboxRabbitMQtopic').value;
+    var mqSettings=Android.getMQSettings();
+    mqSettingsArray=mqSettings.split(',');
+    mqAddress=mqSettingsArray[0];
+    mqUser=mqSettingsArray[1];
+    mqPassword=mqSettingsArray[2];
+    mqTopic=mqSettingsArray[3];
+    //mqAddress=parent.document.getElementById('txtboxRabbitMQserver').value;
+    //mqUser=parent.document.getElementById('txtboxRabbitMQuser').value;
+    //mqPassword=parent.document.getElementById('txtboxRabbitMQpassword').value;
+    //mqTopic=parent.document.getElementById('txtboxRabbitMQtopic').value;
     // console.debug("mqAddress",mqAddress);
     // console.debug("mqUser",mqUser);
     // console.debug("mqPassword",mqPassword);
     // console.debug("mqTopic",mqTopic);
-    // initRabbit(mqAddress,mqUser,mqPassword,mqTopic);
+    initRabbit(mqAddress,mqUser,mqPassword,mqTopic);
 
     map0.on('contextmenu', function(e){
-        var x=e.latlng.lat;
-        var y=e.latlng.lng;
+        var x=e.latlng.lng;
+        var y=e.latlng.lat;
         Android.manualLocationUpdateinPixels(x + "," + y);
     });
 

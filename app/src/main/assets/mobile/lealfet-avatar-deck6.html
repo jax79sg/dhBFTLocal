@@ -56,7 +56,12 @@ Deck 6 - Captain's Deck
     getCustomMarker(66.16*250/100,0,null,'P220',true,0).addTo(map0);
 
 
-    //
+    var mqSettings=Android.getMQSettings();
+    mqSettingsArray=mqSettings.split(',');
+    mqAddress=mqSettingsArray[0];
+    mqUser=mqSettingsArray[1];
+    mqPassword=mqSettingsArray[2];
+    mqTopic=mqSettingsArray[3];
     // mqAddress=parent.document.getElementById('txtboxRabbitMQserver').value;
     // mqUser=parent.document.getElementById('txtboxRabbitMQuser').value;
     // mqPassword=parent.document.getElementById('txtboxRabbitMQpassword').value;
@@ -65,11 +70,11 @@ Deck 6 - Captain's Deck
     // console.debug("mqUser",mqUser);
     // console.debug("mqPassword",mqPassword);
     // console.debug("mqTopic",mqTopic);
-    // initRabbit(mqAddress,mqUser,mqPassword,mqTopic);
+    initRabbit(mqAddress,mqUser,mqPassword,mqTopic);
 
     map0.on('contextmenu', function(e){
-        var x=e.latlng.lat;
-        var y=e.latlng.lng;
+        var x=e.latlng.lng;
+        var y=e.latlng.lat;
         Android.manualLocationUpdateinPixels(x + "," + y);
     });
 

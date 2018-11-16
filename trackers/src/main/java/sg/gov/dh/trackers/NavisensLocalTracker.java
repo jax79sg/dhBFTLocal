@@ -151,6 +151,8 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
      * From X=0,Y=0,Deg=0, Turn right then walk straight: Degree=-90, Y decreases
      * From X=0,Y=0,Deg=0, Turn left then walk straight: Degree=90, Y increases
      * From X=0,Y=0,Deg=0, Turn around then walk straight: Degree=180/-180, X decreases
+     * Not to worry, this class turns that into the more conventional Left hand Coordinate System for user consumption.
+     *
      * This constructor will be replaced with NavisensLocalTracker(Activity context, boolean useLastKnownLoc)
      * The constructor accepts a Activity class. This is needed to provide backdoor access to the UI. (E.g. Toast)<br>
      * Constructor will always get a initial location update via last known GPS, if any.<br>

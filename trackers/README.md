@@ -1,6 +1,7 @@
 
 Upon importing of the Trackers module, you should be able to perform the following import of classes.
 
+Do the following in your activity class
 '''
 import sg.gov.dh.trackers.Coords;
 import sg.gov.dh.trackers.Event;

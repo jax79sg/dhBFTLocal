@@ -70,8 +70,8 @@ function androidToJSupdateLocation(trackerMessage)
 
 function updateTarget(message)
 {
-    var y = Number(message[0])*1;
-    var x = Number(message[1]);
+    var x = Number(message[0]);
+    var y = Number(message[1]);
     var alt=parseFloat(message[2]);
     alt=alt-baselineHeightInMetres;
     var user=message[4];
@@ -90,13 +90,13 @@ function updateTarget(message)
 
             var marker=null;
             if (action=='FORWARD'){
-                marker = getCustomMarker(y, alt, 'walking', user, true, 0);
+                marker = getCustomMarker(x, alt, 'walking', user, true, 0);
             }else {
-                marker = getCustomMarker(y, alt, 'standing', user, true, 0);
+                marker = getCustomMarker(x, alt, 'standing', user, true, 0);
             }
 
             // var marker = getCustomMarker(y, alt, 'walking', user, true, bearing);
-            console.log("Adding marker: "+ user + " " + y + " " + alt);
+            console.log("Adding marker: "+ user + " " + x + " " + alt);
             markers.push(marker);
             marker.addTo(map0);
 
@@ -107,12 +107,12 @@ function updateTarget(message)
     if (!found)
     {
         console.log("Received: " + message);
-        console.log("Adding marker: "+ user + " " + y + " " + alt);
+        console.log("Adding marker: "+ user + " " + x + " " + alt);
         var marker=null;
         if (action=='FORWARD'){
-            marker = getCustomMarker(y, alt, 'walking', user, true, 0);
+            marker = getCustomMarker(x, alt, 'walking', user, true, 0);
         }else {
-            marker = getCustomMarker(y, alt, 'standing', user, true, 0);
+            marker = getCustomMarker(x, alt, 'standing', user, true, 0);
         }
         // var marker = getCustomMarker(y, alt, 'walking', user, true, bearing);
         marker.addTo(map0);

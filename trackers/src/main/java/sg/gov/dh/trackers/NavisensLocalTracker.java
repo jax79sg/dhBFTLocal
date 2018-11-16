@@ -200,17 +200,38 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
         String motionType=motionDna.getMotion().motionType.name();
         String locStatus=loc.locationStatus.name();
         MotionDna.XYZ localLocation=loc.localLocation;
-        double x = localLocation.x;
-        double y = localLocation.y;
+        double righthandx = localLocation.x;
+        double righthandy = localLocation.y;
         double z = localLocation.z;
-        double localHeading = loc.localHeading;
+        double righthandlocalHeading = loc.localHeading;
         String verticalMotion = loc.verticalMotionStatus.name();
 
+        double x=convertRightToLeftX(righthandx,righthandy);
+        double y=convertRightToLeftY(righthandx, righthandy);
+        double localHeading = convertRightToLeftHeading(righthandlocalHeading);
 
         Log.i(TAG,"X:"+x + " Y:"+y + " Z:"+z + " Heading:" + localHeading + " locStatus:"+ locStatus + "VerticalMotion:" + verticalMotion + " EstimatedMotion:" + motionType);
         listener.onNewCoords(new Coords(0,0,z,localHeading,(float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, x, y, motionType));
 
     }
+
+    private double convertRightToLeftHeading(double righthandlocalHeading) {
+        double tempheading=righthandlocalHeading*-1;
+        return tempheading;
+
+    }
+
+    private double convertRightToLeftY(double righthandx, double righthandy) {
+        double tempy = righthandx;
+        return tempy;
+    }
+
+    private double convertRightToLeftX(double righthandx, double righthandy) {
+        double tempx = righthandy;
+        tempx=tempx*-1;
+        return (tempx);
+    }
+
 
     /**
      * Optional: Only if using NAVISENS network mode.

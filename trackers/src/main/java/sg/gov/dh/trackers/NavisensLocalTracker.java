@@ -138,7 +138,20 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
 
 
     /**
-     * @deprecated This constructor will be replaced with NavisensLocalTracker(Activity context, boolean useLastKnownLoc)
+     * WARNING: NAVISENS uses the Right Hand Coordinate System. Meaning
+     *                        X
+     *                        ^
+     *                        |
+     *                        |
+     *                        |
+     *                        |
+     *                        |
+     * Y <---------------------
+     * From X=0,Y=0,Deg=0, Walk straight: X increase
+     * From X=0,Y=0,Deg=0, Turn right then walk straight: Degree=-90, Y decreases
+     * From X=0,Y=0,Deg=0, Turn left then walk straight: Degree=90, Y increases
+     * From X=0,Y=0,Deg=0, Turn around then walk straight: Degree=180/-180, X decreases
+     * This constructor will be replaced with NavisensLocalTracker(Activity context, boolean useLastKnownLoc)
      * The constructor accepts a Activity class. This is needed to provide backdoor access to the UI. (E.g. Toast)<br>
      * Constructor will always get a initial location update via last known GPS, if any.<br>
      * It will then initialise the NAVISENS API core. After constructor completes, NAVISENS should be providing regular location updates.

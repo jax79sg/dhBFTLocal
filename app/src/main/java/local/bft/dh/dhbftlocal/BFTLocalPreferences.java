@@ -1,72 +1,96 @@
 package local.bft.dh.dhbftlocal;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 public class BFTLocalPreferences {
+
+    private Context context= null;
+    private SharedPreferences prefs = null;
+
     private ArrayList<String> floors = new ArrayList<String>();
     private int currentFloor=0;
     private double onePixelToMetres=(11.82/1400*250/100);
     private double mapScale=250; //1cm to 250cm
 
     public String getMqHost() {
-        return mqHost;
+        return this.prefs.getString(context.getResources().getString(R.string.mqhost),"null") ;
     }
 
-    public void setMqHost(String mqHost) {
-        this.mqHost = mqHost;
-    }
+//    public void setMqHost(String mqHost) {
+//        this.mqHost = mqHost;
+//    }
 
-    private String mqHost="ws://jax79sg.hopto.org:15674/ws";
+//    private String mqHost="ws://jax79sg.hopto.org:15674/ws";
+
+    public String getPort(){
+        return this.prefs.getString(context.getResources().getString(R.string.mqport),"null") ;
+    }
 
     public String getTopic() {
-        return topic;
+        return this.prefs.getString(context.getResources().getString(R.string.mqTopic),"null") ;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
+//    public void setTopic(String topic) {
+//        this.topic = topic;
+//    }
 
-    private String topic="/exchange/bfttracksExchange/bfttracks";
+//    private String topic="/exchange/bfttracksExchange/bfttracks";
     public String getMqUsername() {
-        return mqUsername;
+        return this.prefs.getString(context.getResources().getString(R.string.mqUser),"null") ;
     }
 
-    public void setMqUsername(String mqUsername) {
-        this.mqUsername = mqUsername;
-    }
+//    public void setMqUsername(String mqUsername) {
+//        this.mqUsername = mqUsername;
+//    }
 
     public String getMqPassword() {
-        return mqPassword;
+        return this.prefs.getString(context.getResources().getString(R.string.mqPassword),"null") ;
     }
 
-    public void setMqPassword(String mqPassword) {
-        this.mqPassword = mqPassword;
-    }
+//    public void setMqPassword(String mqPassword) {
+//        this.mqPassword = mqPassword;
+//    }
 
-    private String mqUsername="jax";
-    private String mqPassword="password";
+//    private String mqUsername="jax";
+//    private String mqPassword="password";
 
     public String getBfthost() {
-        return bfthost;
+
+        return this.prefs.getString(context.getResources().getString(R.string.mqhost),"null") ;
     }
 
-    public void setBfthost(String bfthost) {
-        this.bfthost = bfthost;
-    }
+//    public void setBfthost(String bfthost) {
+//        this.bfthost = bfthost;
+//    }
 
-    private String bfthost="jax79sg.hopto.org";
+//    private String bfthost="jax79sg.hopto.org";
 
     public String getName() {
-        return name;
+        return this.prefs.getString(context.getResources().getString(R.string.callsign),"null") ;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+//    public void setName(String name) {
+//        this.name = name;
+//    }
 
-    private String name="Xperia";
+//    private String name="Xperia";
 
-    public BFTLocalPreferences()
+    public BFTLocalPreferences(Context context)
     {
+
+        this.context=context;
+        PreferenceManager.setDefaultValues(context, R.xml.preferences, true);
+        this.prefs=PreferenceManager.getDefaultSharedPreferences(context);
+//        Map<String, ?> preferences = this.prefs.getAll();
+//        Iterator my=preferences.values().iterator();
+//        Object value=my.next();
+        int noOfPref=this.prefs.getAll().size();
         //Ground floor up
         floors.add(0,"lealfet-avatar-deck3rd.html");
         floors.add(1,"lealfet-avatar-deck2nd.html");
@@ -119,4 +143,6 @@ public class BFTLocalPreferences {
         double metres=pixels*onePixelToMetres;
         return metres;
     }
+
+
 }

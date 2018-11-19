@@ -60,6 +60,7 @@ Deck 2 (Poop)
     mqUser=mqSettingsArray[1];
     mqPassword=mqSettingsArray[2];
     mqTopic=mqSettingsArray[3];
+    mqPort=mqSettingsArray[4];
     //mqAddress=parent.document.getElementById('txtboxRabbitMQserver').value;
     //mqUser=parent.document.getElementById('txtboxRabbitMQuser').value;
     //mqPassword=parent.document.getElementById('txtboxRabbitMQpassword').value;
@@ -68,7 +69,7 @@ Deck 2 (Poop)
     // console.debug("mqUser",mqUser);
     // console.debug("mqPassword",mqPassword);
     // console.debug("mqTopic",mqTopic);
-    initRabbit(mqAddress,mqUser,mqPassword,mqTopic);
+    initRabbit(mqAddress,mqUser,mqPassword,mqTopic,mqPort);
 
     map0.on('contextmenu', function(e){
         var x=e.latlng.lng;

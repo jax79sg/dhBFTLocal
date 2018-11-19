@@ -104,8 +104,30 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
     @Override
     public void setManualLocation(Coords coords) {
 
-        motionDnaApp.setCartesianPositionXY(coords.getX(),coords.getY());
-        motionDnaApp.setLocalHeading(coords.getBearing());
+        double x = convertLeftToRightX(coords.getX(),coords.getY());
+        double y = convertLeftToRightY(coords.getX(),coords.getY());
+        double heading = convertLeftToRightHeading(coords.getBearing());
+
+//        motionDnaApp.setCartesianPositionXY(coords.getX(),coords.getY());
+//        motionDnaApp.setLocalHeading(coords.getBearing());
+
+        motionDnaApp.setCartesianPositionXY(x,y);
+        motionDnaApp.setLocalHeading(heading);
+    }
+
+    private double convertLeftToRightX(double x, double y) {
+        double tempx = y;
+        return tempx;
+    }
+
+    private double convertLeftToRightY(double x, double y) {
+        double tempy=x;
+        tempy=-1*tempy;
+        return  tempy;
+    }
+
+    private double convertLeftToRightHeading(double bearing) {
+        return (bearing*-1);
     }
 
     /**

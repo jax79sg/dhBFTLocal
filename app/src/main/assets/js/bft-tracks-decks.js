@@ -3,8 +3,9 @@ var markers=Array();
 
 
 
-function initRabbit(mqAddress, username, password, topic){
+function initRabbit(mqAddress, username, password, topic, port){
     // var ws = new WebSocket('ws://18.221.97.164:15674/ws');
+    var mqAddress = "ws://"+mqAddress+":"+port+"/ws";
     var ws = new WebSocket(mqAddress);
     var client = Stomp.over(ws);
     var on_connect = function() {

@@ -5,48 +5,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
-    <WebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_marginTop="110dp"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+        <WebView
+            android:id="@+id/webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ImageButton android:id="@+id/upButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:srcCompat="@android:drawable/arrow_up_float"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="right"/>
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_marginTop="110dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageButton android:id="@+id/upButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@android:drawable/arrow_up_float"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="right"/>
 
 
-            <ImageButton
-                android:id="@+id/zeroButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="right"
-                android:layout_marginTop="60dp"
-                app:srcCompat="@android:drawable/presence_invisible" />
+                <ImageButton
+                    android:id="@+id/zeroButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="60dp"
+                    app:srcCompat="@android:drawable/presence_invisible" />
 
 
-            <ImageButton
-                android:id="@+id/downButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="right"
-                android:layout_marginTop="100dp"
-                app:srcCompat="@android:drawable/arrow_down_float" />
+                <ImageButton
+                    android:id="@+id/downButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="100dp"
+                    app:srcCompat="@android:drawable/arrow_down_float" />
+
+                <EditText
+                    android:id="@+id/textXYZ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="200dp"
+                    android:text="EditText"
+                    android:textColor="#ffffff"/>
+
+                <EditText
+                    android:id="@+id/textBearing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="220dp"
+                    android:text="EditText"
+                    android:textColor="#ffffff"/>
+
+                <EditText
+                    android:id="@+id/textAction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="260dp"
+                    android:text="EditText"
+                    android:textColor="#ffffff"/>
+
+            </FrameLayout>
 
 
 
-        </FrameLayout>
 
+        </WebView>
+    </LinearLayout>
 
-
-    </WebView>
 
 
 

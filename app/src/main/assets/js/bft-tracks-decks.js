@@ -80,7 +80,7 @@ function updateTarget(message)
     // console.debug("x:",x);
     // console.debug("y:",y);
     var alt=message[2];
-    alt=parseFloat(alt)-baselineHeightInMetres;
+//    alt=parseFloat(alt)-baselineHeightInMetres;
     var user=message[4];
     var action=message[5];
     var bearing = message[3];
@@ -95,6 +95,7 @@ function updateTarget(message)
             map0.removeLayer(markers[i]);
             markers.splice(i,1);
 
+if (alt>=lowestHeight && alt<=highestHeight) {
             var marker=null;
             if (action=='FORWARD'){
                 marker = getCustomMarker(x, y, 'navigating', user, true, bearing);
@@ -107,11 +108,13 @@ function updateTarget(message)
             marker.addTo(map0);
 
             // console.debug('Removing marker');
+            }
             break;
         }
     }
     if (!found)
     {
+    if (alt>=lowestHeight && alt<=highestHeight) {
         var marker=null;
         console.log("Adding marker: "+ user + ","+ y + ","+ x);
         if (action=='FORWARD'){
@@ -121,5 +124,6 @@ function updateTarget(message)
         }
         marker.addTo(map0);
         markers.push(marker);
+        }
     }
 }

@@ -30,6 +30,8 @@ Platform Deck
 
 
 <script>
+    var lowestHeight=-8.875
+    var highestHeight=-5.15
 
     var gaScale = 250.0; // GA scale 1cm to 250 cm
     var pxWidth = 1844; //Width of GA cut out
@@ -76,7 +78,7 @@ Platform Deck
     map0.on('contextmenu', function(e){
         var x=e.latlng.lng;
         var y=e.latlng.lat;
-        Android.manualLocationUpdateinPixels(x + "," + y);
+        Android.manualLocationUpdateinPixels(x + "," + y + ",-8.875");
     });
 </script>
 </body>

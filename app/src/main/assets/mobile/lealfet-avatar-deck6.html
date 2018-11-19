@@ -29,6 +29,8 @@ Deck 6 - Captain's Deck
 
 
 <script>
+    var lowestHeight=14.05
+    var highestHeight=17.35
     var gaScale = 250.0; // GA scale 1cm to 250 cm
     var pxWidth = 1920; //Width of GA cut out
     var metreWidth = (16.24*gaScale)/100; //Width measure from GA cut out
@@ -76,7 +78,7 @@ Deck 6 - Captain's Deck
     map0.on('contextmenu', function(e){
         var x=e.latlng.lng;
         var y=e.latlng.lat;
-        Android.manualLocationUpdateinPixels(x + "," + y);
+        Android.manualLocationUpdateinPixels(x + "," + y+",14.05");
     });
 
 </script>

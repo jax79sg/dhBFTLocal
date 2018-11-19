@@ -27,14 +27,14 @@ public class WebAppInterface {
 
     /** Show a toast from the web page */
     @JavascriptInterface
-    public void manualLocationUpdateinPixels(String xyInPixels) {
-        String[] xy=xyInPixels.split(",");
-        Log.d(TAG,"1.manualLocationUpdateinPixels: " + xy[0] + ","+ xy[1]);
-        Log.d(TAG,"2.manualLocationUpdateinPixels: " + Double.parseDouble(xy[0]) + ","+ Double.parseDouble(xy[1]));
-        Log.d(TAG,"3.manualLocationUpdateinPixels: " + pref.getMetresFromPixels(Double.parseDouble(xy[0])) + ","+ pref.getMetresFromPixels(Double.parseDouble(xy[1])));
+    public void manualLocationUpdateinPixels(String xyInPixelszInMetres) {
+        String[] xyz=xyInPixelszInMetres.split(",");
+        Log.d(TAG,"1.manualLocationUpdateinPixels: " + xyz[0] + ","+ xyz[1] + "," + xyz[2]);
+        Log.d(TAG,"2.manualLocationUpdateinPixels: " + Double.parseDouble(xyz[0]) + ","+ Double.parseDouble(xyz[1]));
+        Log.d(TAG,"3.manualLocationUpdateinPixels: " + pref.getMetresFromPixels(Double.parseDouble(xyz[0])) + ","+ pref.getMetresFromPixels(Double.parseDouble(xyz[1])));
 
 
-        tracker.setManualLocation(new Coords(0, 0, 0, 0, 0,0, 0,pref.getMetresFromPixels(Double.parseDouble(xy[0])) , pref.getMetresFromPixels(Double.parseDouble(xy[1])), null));
+        tracker.setManualLocation(new Coords(0, 0, Double.parseDouble(xyz[2]), 0, 0,0, 0,pref.getMetresFromPixels(Double.parseDouble(xyz[0])) , pref.getMetresFromPixels(Double.parseDouble(xyz[1])), null));
     }
 
     @JavascriptInterface

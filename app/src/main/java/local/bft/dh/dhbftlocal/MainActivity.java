@@ -1,8 +1,6 @@
 package local.bft.dh.dhbftlocal;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,11 +11,8 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -29,6 +24,14 @@ import sg.gov.dh.trackers.NavisensLocalTracker;
 import sg.gov.dh.trackers.TrackerListener;
 
 public class MainActivity extends AppCompatActivity {
+
+    //Somehow need to think of a way to make these 2 variables eternal
+    double currentHeight=0.0;
+    double mapHeight=0.0;
+    double newHeight=0.0;
+    double currentOffset=0.0;
+
+
 
     MQRabbit mqRabbit = null;
     NavisensLocalTracker tracker=null;
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG,"Z:"+coords.getAltitude());
                 Log.d(TAG,"bearing:"+coords.getBearing());
                 Log.d(TAG,"Action:"+coords.getAction());
+
                 updateMap(coords);
                 sendCoords(coords);
                 showCoords(coords);
@@ -58,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
     private void runTracker()
     {
 

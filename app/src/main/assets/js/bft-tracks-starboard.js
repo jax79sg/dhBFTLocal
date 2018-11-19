@@ -73,7 +73,7 @@ function updateTarget(message)
     var x = Number(message[0]);
     var y = Number(message[1]);
     var alt=parseFloat(message[2]);
-    alt=alt-baselineHeightInMetres;
+    //alt=alt-baselineHeightInMetres;
     var user=message[4];
     var action=message[5];
     var bearing = message[3];

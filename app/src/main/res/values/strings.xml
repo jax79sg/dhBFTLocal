@@ -123,4 +123,6 @@
     <string name="Deck2ndoffset">2nd Deck Offset</string>
     <string name="Deck3rdoffset">3rd Deck Offset</string>
     <string name="DeckPlatformoffset">Platform Deck Offset</string>
+    <string name="realheight">Real height</string>
+    <string name="mapheight">Map height</string>
 </resources>

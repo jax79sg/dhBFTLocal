@@ -29,6 +29,8 @@ Deck 3 - Boat Deck
 
 
 <script>
+    var lowestHeight=6.85
+    var highestHeight=9.525
     var gaScale = 250.0; // GA scale 1cm to 250 cm
     var pxWidth = 1921; //Width of GA cut out
     var metreWidth = (16.25*gaScale)/100; //Width measure from GA cut out
@@ -75,7 +77,7 @@ Deck 3 - Boat Deck
     map0.on('contextmenu', function(e){
         var x=e.latlng.lng;
         var y=e.latlng.lat;
-        Android.manualLocationUpdateinPixels(x + "," + y);
+        Android.manualLocationUpdateinPixels(x + "," + y+",6.85");
     });
 
 </script>

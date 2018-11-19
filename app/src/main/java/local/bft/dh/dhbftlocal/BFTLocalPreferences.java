@@ -4,9 +4,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 
 public class BFTLocalPreferences {
 
@@ -22,11 +19,6 @@ public class BFTLocalPreferences {
         return this.prefs.getString(context.getResources().getString(R.string.mqhost),"null") ;
     }
 
-//    public void setMqHost(String mqHost) {
-//        this.mqHost = mqHost;
-//    }
-
-//    private String mqHost="ws://jax79sg.hopto.org:15674/ws";
 
     public String getPort(){
         return this.prefs.getString(context.getResources().getString(R.string.mqport),"null") ;
@@ -36,50 +28,26 @@ public class BFTLocalPreferences {
         return this.prefs.getString(context.getResources().getString(R.string.mqTopic),"null") ;
     }
 
-//    public void setTopic(String topic) {
-//        this.topic = topic;
-//    }
-
-//    private String topic="/exchange/bfttracksExchange/bfttracks";
     public String getMqUsername() {
         return this.prefs.getString(context.getResources().getString(R.string.mqUser),"null") ;
     }
 
-//    public void setMqUsername(String mqUsername) {
-//        this.mqUsername = mqUsername;
-//    }
 
     public String getMqPassword() {
         return this.prefs.getString(context.getResources().getString(R.string.mqPassword),"null") ;
     }
 
-//    public void setMqPassword(String mqPassword) {
-//        this.mqPassword = mqPassword;
-//    }
-
-//    private String mqUsername="jax";
-//    private String mqPassword="password";
 
     public String getBfthost() {
 
         return this.prefs.getString(context.getResources().getString(R.string.mqhost),"null") ;
     }
 
-//    public void setBfthost(String bfthost) {
-//        this.bfthost = bfthost;
-//    }
-
-//    private String bfthost="jax79sg.hopto.org";
 
     public String getName() {
         return this.prefs.getString(context.getResources().getString(R.string.callsign),"null") ;
     }
 
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-
-//    private String name="Xperia";
 
     public BFTLocalPreferences(Context context)
     {
@@ -87,10 +55,7 @@ public class BFTLocalPreferences {
         this.context=context;
         PreferenceManager.setDefaultValues(context, R.xml.preferences, true);
         this.prefs=PreferenceManager.getDefaultSharedPreferences(context);
-//        Map<String, ?> preferences = this.prefs.getAll();
-//        Iterator my=preferences.values().iterator();
-//        Object value=my.next();
-        int noOfPref=this.prefs.getAll().size();
+
         //Ground floor up
         floors.add(0,"lealfet-avatar-deck3rd.html");
         floors.add(1,"lealfet-avatar-deck2nd.html");

@@ -109,4 +109,19 @@
             android:defaultValue="-8.875"/>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="hidden_category"
+        android:title="Live data Do not alter">
+        <EditTextPreference
+            android:key="@string/realheight"
+            android:title="@string/realheight"
+            android:summary="Real height info"
+            android:defaultValue="90"/>
+        <EditTextPreference
+            android:key="@string/mapheight"
+            android:title="@string/mapheight"
+            android:summary="Map height info"
+            android:defaultValue="5"/>
+    </PreferenceCategory>
+
 </PreferenceScreen>

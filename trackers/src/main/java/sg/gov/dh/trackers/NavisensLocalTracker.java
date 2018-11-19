@@ -19,6 +19,12 @@ import java.util.Map;
 
 public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
 
+    //Somehow need to think of a way to make these 2 variables eternal
+    double currentHeight=0.0;
+    double mapHeight=0.0;
+    double newHeight=0.0;
+    double currentOffset=0.0;
+
     /**
      * Do not change this.
      */
@@ -106,6 +112,10 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
 
         double x = convertLeftToRightX(coords.getX(),coords.getY());
         double y = convertLeftToRightY(coords.getX(),coords.getY());
+        double z = coords.getAltitude();
+        this.mapHeight=z;
+        this.currentOffset=0;
+        
         double heading = convertLeftToRightHeading(coords.getBearing());
 
 //        motionDnaApp.setCartesianPositionXY(coords.getX(),coords.getY());
@@ -234,9 +244,16 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
         double y=convertRightToLeftY(righthandx, righthandy);
         double localHeading = convertRightToLeftHeading(righthandlocalHeading);
 
+        performTrackingHeightOffsetAdjustment(z);
         Log.i(TAG,"X:"+x + " Y:"+y + " Z:"+z + " Heading:" + localHeading + " locStatus:"+ locStatus + "VerticalMotion:" + verticalMotion + " EstimatedMotion:" + motionType);
-        listener.onNewCoords(new Coords(0,0,z,localHeading,(float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, x, y, motionType));
+        listener.onNewCoords(new Coords(0,0,this.mapHeight,localHeading,(float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, x, y, motionType));
 
+    }
+
+    private void performTrackingHeightOffsetAdjustment(double z) {
+        this.currentOffset=z-this.currentHeight;
+        this.mapHeight=this.mapHeight+this.currentOffset;
+        this.currentHeight=z;
     }
 
     private double convertRightToLeftHeading(double righthandlocalHeading) {

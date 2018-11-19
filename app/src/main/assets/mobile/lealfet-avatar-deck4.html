@@ -29,6 +29,8 @@ Deck 4
 
 
 <script>
+    var lowestHeight=9.525
+    var highestHeight=12.075
     var gaScale = 250.0; // GA scale 1cm to 250 cm
     var pxWidth = 1636; //Width of GA cut out
     var metreWidth = (13.85*gaScale)/100; //Width measure from GA cut out
@@ -74,7 +76,7 @@ Deck 4
     map0.on('contextmenu', function(e){
         var x=e.latlng.lng;
         var y=e.latlng.lat;
-        Android.manualLocationUpdateinPixels(x + "," + y);
+        Android.manualLocationUpdateinPixels(x + "," + y+",9.525");
     });
 
 </script>

@@ -29,7 +29,8 @@ Tween Deck
 
 
 <script>
-
+    var lowestHeight=1.35
+    var highestHeight=3.925
     var gaScale = 250.0; // GA scale 1cm to 250 cm
     var pxWidth = 1920; //Width of GA cut out
     var metreWidth = (16.24*gaScale)/100; //Width measure from GA cut out
@@ -75,7 +76,7 @@ Tween Deck
     map0.on('contextmenu', function(e){
         var x=e.latlng.lng;     //Leaflet represents xy in the opposite way
         var y=e.latlng.lat;
-        Android.manualLocationUpdateinPixels(x + "," + y);
+        Android.manualLocationUpdateinPixels(x + "," + y + ",1.35" );
     });
 
 

@@ -57,15 +57,18 @@ Lateral view - Displays all tracked entities from portside
     // getCustomMarker(61.37*250/100,0,null,'P200',true,0).addTo(map0);
     getCustomMarker(66.16*250/100,0,null,'P220',true,0).addTo(map0);
 
-    // mqAddress=parent.document.getElementById('txtboxRabbitMQserver').value;
-    // mqUser=parent.document.getElementById('txtboxRabbitMQuser').value;
-    // mqPassword=parent.document.getElementById('txtboxRabbitMQpassword').value;
-    // mqTopic=parent.document.getElementById('txtboxRabbitMQtopic').value;
-    // console.debug("mqAddress",mqAddress);
-    // console.debug("mqUser",mqUser);
-    // console.debug("mqPassword",mqPassword);
-    // console.debug("mqTopic",mqTopic);
-    // initRabbit(mqAddress,mqUser,mqPassword,mqTopic);
+    var mqSettings=Android.getMQSettings();
+    mqSettingsArray=mqSettings.split(',');
+    mqAddress=mqSettingsArray[0];
+    mqUser=mqSettingsArray[1];
+    mqPassword=mqSettingsArray[2];
+    mqTopic=mqSettingsArray[3];
+    mqPort=mqSettingsArray[4];
+    console.log("mqAddress:" + mqAddress);
+    console.log("mqUser:" + mqUser);
+    console.log("mqPassword:"+ mqPassword);
+    console.log("mqTopic:"+ mqTopic);
+    initRabbit(mqAddress,mqUser,mqPassword,mqTopic,mqPort);
 
 
 </script>

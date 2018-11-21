@@ -19,7 +19,11 @@ function initRabbit(mqAddress, username, password, topic, port){
             // console.log("Alt:" + message[2]);
             // console.log("Bearing:" + message[3]);
             // console.log("WhoAmI:" + message[4]);
-            updateTarget(message);
+            msgName=message[4];
+            myname=Android.getName();
+            if (myname!=msgName){
+                updateTarget(message);
+            }
         }, { id: 'decks' });
     };
     var on_error =  function(error) {
@@ -95,7 +99,7 @@ function updateTarget(message)
             map0.removeLayer(markers[i]);
             markers.splice(i,1);
 
-if (alt>=lowestHeight && alt<=highestHeight) {
+        if (alt>=lowestHeight && alt<=highestHeight) {
             var marker=null;
             if (action=='FORWARD'){
                 marker = getCustomMarker(x, y, 'navigating', user, true, bearing);
@@ -108,8 +112,9 @@ if (alt>=lowestHeight && alt<=highestHeight) {
             marker.addTo(map0);
 
             // console.debug('Removing marker');
-            }
             break;
+            }
+
         }
     }
     if (!found)
@@ -118,9 +123,9 @@ if (alt>=lowestHeight && alt<=highestHeight) {
         var marker=null;
         console.log("Adding marker: "+ user + ","+ y + ","+ x);
         if (action=='FORWARD'){
-            marker = getCustomMarker(y, x, 'navigating', user, true, bearing);
+            marker = getCustomMarker(x, y, 'navigating', user, true, bearing);
         }else {
-            marker = getCustomMarker(y, x, 'standing', user, true, 0);
+            marker = getCustomMarker(x, y, 'standing', user, true, 0);
         }
         marker.addTo(map0);
         markers.push(marker);

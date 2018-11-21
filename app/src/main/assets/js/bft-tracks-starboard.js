@@ -4,6 +4,7 @@ var markers=Array();
 function initRabbit(mqAddress, username, password, topic, port){
     // var ws = new WebSocket('ws://18.221.97.164:15674/ws');
     var mqAddress = "ws://"+mqAddress+":"+port+"/ws";
+    var ws = new WebSocket(mqAddress);
     var client = Stomp.over(ws);
     var on_connect = function() {
         console.log('connected');
@@ -16,7 +17,11 @@ function initRabbit(mqAddress, username, password, topic, port){
             // console.log("Alt:" + message[2]);
             // console.log("Bearing:" + message[3]);
             // console.log("WhoAmI:" + message[4]);
-            updateTarget(message);
+            msgName=message[4];
+            myname=Android.getName();
+            if (myname!=msgName){
+                updateTarget(message);
+            }
         }, { id: 'starboard' });
     };
     var on_error =  function(error) {

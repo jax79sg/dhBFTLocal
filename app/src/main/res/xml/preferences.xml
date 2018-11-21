@@ -48,6 +48,27 @@
 
     </PreferenceCategory>
 
+
+    <PreferenceCategory
+        android:key="estimote_category"
+        android:title="Estimote settings">
+
+    <EditTextPreference
+        android:key="@string/estimoteId"
+        android:summary="Enter the Application ID of Estimote"
+        android:defaultValue="ong-xin-cai-s-proximity-fo-hm6"
+        android:title="@string/estimoteId"/>
+
+    <EditTextPreference
+        android:key="@string/estimoteToken"
+        android:summary="Enter the Application Token of Estimote"
+        android:defaultValue="35cd4baf21cdcc9feee14d0fb028c36d"
+        android:title="@string/estimoteToken"/>
+
+    </PreferenceCategory>
+
+
+
     <PreferenceCategory
         android:key="floorplan_category"
         android:title="Building floorplan">

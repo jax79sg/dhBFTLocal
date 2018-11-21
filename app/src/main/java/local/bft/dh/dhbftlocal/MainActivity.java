@@ -13,11 +13,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 
 import dh.gov.sg.mq.rabbitmq.MQRabbit;
+import sg.gov.dh.beacons.Beacons;
+import sg.gov.dh.beacons.estimote.EstimoteBeacon;
 import sg.gov.dh.trackers.Coords;
 import sg.gov.dh.trackers.Event;
 import sg.gov.dh.trackers.NavisensLocalTracker;
@@ -94,8 +97,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        initTracker();
         prefs= new BFTLocalPreferences(this);
+        initBeacon();
+        initTracker();
+
+
         myWebView = (WebView) findViewById(R.id.webview);
 
         WebSettings webSettings = myWebView.getSettings();
@@ -135,8 +141,15 @@ public class MainActivity extends AppCompatActivity {
         setupMessageQueue();
         runTracker();
 
+    }
 
-
+    private void initBeacon() {
+        Beacons beacon = new EstimoteBeacon();
+        beacon.setAppId(prefs.getBeaconAppId());
+        beacon.setAppToken(prefs.getBeaconToken());
+        beacon.setParentContext(this);
+        beacon.setup();
+        Toast.makeText(this.getApplicationContext(),"Beacon is setup",Toast.LENGTH_LONG);
     }
 
     private void setupMessageQueue() {

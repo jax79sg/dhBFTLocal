@@ -1,1 +1,1 @@
-include ':app', ':trxapi', ':trackers', ':mq.rabbit'
+include ':app', ':trxapi', ':trackers', ':mq.rabbit', ':estimote'

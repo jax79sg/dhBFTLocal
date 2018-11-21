@@ -46,4 +46,13 @@ public class WebAppInterface {
         return message;
     }
 
+    @JavascriptInterface
+    public String getName()
+    {
+
+        String message=pref.getName();
+        Log.d(TAG,"getName: " + message);
+        return message;
+    }
+
 }

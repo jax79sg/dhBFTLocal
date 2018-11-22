@@ -140,7 +140,14 @@ public class MQRabbit {
         boolean isSuccess=false;
         if (isActive) {
             byte[] messageBodyBytes = message.getBytes();
-            channel.basicPublish(queueName+"Exchange", routingKey, null, messageBodyBytes);
+            try {
+                channel.basicPublish(queueName + "Exchange", routingKey, null, messageBodyBytes);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                isSuccess=false;
+            }
             isSuccess=true;
         }
         return isSuccess;

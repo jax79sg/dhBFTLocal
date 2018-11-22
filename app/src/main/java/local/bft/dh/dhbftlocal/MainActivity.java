@@ -1,6 +1,8 @@
 package local.bft.dh.dhbftlocal;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +21,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import dh.gov.sg.mq.rabbitmq.MQRabbit;
+import sg.gov.dh.beacons.Beacon;
+import sg.gov.dh.beacons.BeaconListener;
 import sg.gov.dh.beacons.Beacons;
 import sg.gov.dh.beacons.estimote.EstimoteBeacon;
 import sg.gov.dh.trackers.Coords;
@@ -34,12 +38,11 @@ public class MainActivity extends AppCompatActivity {
     double newHeight=0.0;
     double currentOffset=0.0;
 
-
-
     MQRabbit mqRabbit = null;
     NavisensLocalTracker tracker=null;
     WebView myWebView=null;
     BFTLocalPreferences prefs =null;
+    BeaconZeroing beaconZeroing = null;
     String TAG = "BFTLOCAL";
     private void initTracker()
     {
@@ -138,18 +141,57 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final ImageButton beaconButton = findViewById(R.id.beaconButton);
+        beaconButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                placeBeacon();
+            }
+        });
+
         setupMessageQueue();
         runTracker();
 
     }
 
+    private void placeBeacon() {
+        Coords coords = this.tracker.getCurrentXYZLocation();
+        this.beaconZeroing.dropBeacon(coords,"ice");
+    }
+
     private void initBeacon() {
+        beaconZeroing = new BeaconZeroing();
         Beacons beacon = new EstimoteBeacon();
+        beacon.setBeaconListener(new BeaconListener() {
+            @Override
+            public void onNewUpdate(Beacon beacon) {
+                DroppedBeacon droppedBeacon = beaconZeroing.getBeacon(beacon.getId());
+                if (droppedBeacon!=null)
+                {
+                    Coords coord = droppedBeacon.getCoords();
+                    coord.setAltitude(tracker.getCurrentXYZLocation().getAltitude()); //Effectively ignoring the alt info from beacon
+                    tracker.setManualLocation(coord);
+
+                    try {
+                        playAudio();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
         beacon.setAppId(prefs.getBeaconAppId());
         beacon.setAppToken(prefs.getBeaconToken());
         beacon.setParentContext(this);
         beacon.setup();
         Toast.makeText(this.getApplicationContext(),"Beacon is setup",Toast.LENGTH_LONG);
+    }
+
+    private void playAudio() throws IOException {
+        AssetFileDescriptor afd = getAssets().openFd("to-the-point.mp3");
+        MediaPlayer player = new MediaPlayer();
+        player.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+        player.prepare();
+        player.start();
     }
 
     private void setupMessageQueue() {

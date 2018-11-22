@@ -21,13 +21,13 @@ public interface Beacons {
      */
     boolean isActive();
 
-//    /**
-//     * Allow parent classes (E.g. Map Provider's LocationDataSource class) to access new location updates triggered by the 3rd party tracker technologies.<br>
-//     * Implementaion of this Interface should simply assign the listener to a global private instance.<br>
-//     * this.listener = listener;
-//     * @param listener
-//     */
-//    void setTrackerListener(TrackerListener listener);
+    /**
+     * Allow parent classes to access new Beacons updates triggered by the 3rd party beacon technologies.<br>
+     * Implementaion of this Interface should simply assign the listener to a global private instance.<br>
+     * this.listener = listener;
+     * @param listener
+     */
+    void setBeaconListener(BeaconListener listener);
 
     /**
      * Most 3rd parties beacons would need to be deactivated gracefully to avoid problems to their devices.<br>

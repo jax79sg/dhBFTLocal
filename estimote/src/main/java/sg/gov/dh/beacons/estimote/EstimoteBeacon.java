@@ -19,6 +19,8 @@ import java.util.Set;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
+import sg.gov.dh.beacons.Beacon;
+import sg.gov.dh.beacons.BeaconListener;
 import sg.gov.dh.beacons.Beacons;
 
 public class EstimoteBeacon implements Beacons {
@@ -27,6 +29,7 @@ public class EstimoteBeacon implements Beacons {
     EstimoteCloudCredentials cloudCredentials =null;
     String APPID="ong-xin-cai-s-proximity-fo-hm6";
     String APPTOKEN="35cd4baf21cdcc9feee14d0fb028c36d";
+    private BeaconListener listener;
     double minDist = 3.0;
     Activity context = null;
 
@@ -53,6 +56,12 @@ public class EstimoteBeacon implements Beacons {
     @Override
     public boolean isActive() {
         return false;
+    }
+
+    @Override
+    public void setBeaconListener(BeaconListener listener) {
+        this.listener = listener;
+
     }
 
     @Override
@@ -118,6 +127,7 @@ public class EstimoteBeacon implements Beacons {
                             String subtitle = Utils.getShortIdentifier(proximityContext.getDeviceId());
 
                             nearbyContent.add(new ProximityContent(title, subtitle));
+                            listener.onNewUpdate(new Beacon(title));
                         }
 
 

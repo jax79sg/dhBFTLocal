@@ -24,6 +24,9 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
     double mapHeight=0.0;
     double newHeight=0.0;
     double currentOffset=0.0;
+    double currentX = 0.0;
+    double currentY = 0.0;
+    double currentZ = 0.0;
 
     /**
      * Do not change this.
@@ -216,6 +219,7 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
         motionDnaApp.resetLocalEstimation();
         motionDnaApp.resetLocalHeading();
         motionDnaApp.setBinaryFileLoggingEnabled(false);
+
     }
 
 
@@ -229,6 +233,7 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
      */
     @Override
     public void receiveMotionDna(MotionDna motionDna) {
+
         Log.d(TAG,"Received update from Navisens Tracker");
         MotionDna.Location loc = motionDna.getLocation();
         String motionType=motionDna.getMotion().motionType.name();
@@ -243,7 +248,8 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
         double x=convertRightToLeftX(righthandx,righthandy);
         double y=convertRightToLeftY(righthandx, righthandy);
         double localHeading = convertRightToLeftHeading(righthandlocalHeading);
-
+        this.currentX=x;
+        this.currentY=y;
         performTrackingHeightOffsetAdjustment(z);
         Log.i(TAG,"X:"+x + " Y:"+y + " Z:"+z + " Heading:" + localHeading + " locStatus:"+ locStatus + "VerticalMotion:" + verticalMotion + " EstimatedMotion:" + motionType);
         listener.onNewCoords(new Coords(0,0,this.mapHeight,localHeading,(float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, x, y, motionType));
@@ -312,6 +318,12 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
     @Override
     public PackageManager getPkgManager() {
         return this.getPkgManager();
+    }
+
+    public Coords getCurrentXYZLocation()
+    {
+        Coords coord = new Coords(0.0, 0.0, 0.0, 0.0, 0,0, 0, this.currentX, this.currentY, "");
+        return coord;
     }
 
 }

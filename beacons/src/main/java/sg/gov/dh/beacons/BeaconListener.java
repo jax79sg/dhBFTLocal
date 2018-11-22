@@ -8,9 +8,9 @@ package sg.gov.dh.beacons;
 public interface BeaconListener {
     /**
      * Provide beacon to parent classes<br>
-     * The implementation of Beacon Interface should call this method when they receive new updates.
-     * @param Beacon
+     * The implementation of BeaconObject Interface should call this method when they receive new updates.
+     * @param beacon
      */
-    void onNewUpdate(Beacon beacon);
+    void onNewUpdate(BeaconObject beacon);
 
 }

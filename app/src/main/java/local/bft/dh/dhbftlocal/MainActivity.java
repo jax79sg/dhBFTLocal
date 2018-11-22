@@ -21,11 +21,12 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import dh.gov.sg.mq.rabbitmq.MQRabbit;
-import sg.gov.dh.beacons.Beacon;
+import sg.gov.dh.beacons.BeaconObject;
 import sg.gov.dh.beacons.BeaconListener;
-import sg.gov.dh.beacons.Beacons;
-import sg.gov.dh.beacons.estimote.EstimoteBeacon;
-import sg.gov.dh.trackers.Coords;
+import sg.gov.dh.beacons.BeaconManagerInterface;
+import sg.gov.dh.beacons.DroppedBeacon;
+import sg.gov.dh.beacons.estimote.EstimoteBeaconManager;
+import bft.utils.Coords;
 import sg.gov.dh.trackers.Event;
 import sg.gov.dh.trackers.NavisensLocalTracker;
 import sg.gov.dh.trackers.TrackerListener;
@@ -156,17 +157,23 @@ public class MainActivity extends AppCompatActivity {
     private void placeBeacon() {
         Coords coords = this.tracker.getCurrentXYZLocation();
         this.beaconZeroing.dropBeacon(coords,"ice");
+        this.beaconZeroing.dropBeacon(coords,"mint");
+        this.beaconZeroing.dropBeacon(coords,"coconut");
+        this.beaconZeroing.dropBeacon(coords,"blueberry");
+
     }
 
     private void initBeacon() {
         beaconZeroing = new BeaconZeroing();
-        Beacons beacon = new EstimoteBeacon();
+        BeaconManagerInterface beacon = new EstimoteBeaconManager();
         beacon.setBeaconListener(new BeaconListener() {
             @Override
-            public void onNewUpdate(Beacon beacon) {
+            public void onNewUpdate(BeaconObject beacon) {
+                Log.d(TAG,"Detected beacon with ID: " + beacon.getId());
                 DroppedBeacon droppedBeacon = beaconZeroing.getBeacon(beacon.getId());
                 if (droppedBeacon!=null)
                 {
+                    Log.d(TAG,"Beacon " + beacon.getId() +  " is recognized, zeroing location");
                     Coords coord = droppedBeacon.getCoords();
                     coord.setAltitude(tracker.getCurrentXYZLocation().getAltitude()); //Effectively ignoring the alt info from beacon
                     tracker.setManualLocation(coord);
@@ -177,13 +184,19 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                else
+                {
+                    Log.d(TAG,"Beacon " + beacon.getId() +  " is NOT recognized, skipping");
+                }
+
             }
         });
         beacon.setAppId(prefs.getBeaconAppId());
         beacon.setAppToken(prefs.getBeaconToken());
+        beacon.setDistActivate(prefs.getBeaconActivateDistance());
         beacon.setParentContext(this);
         beacon.setup();
-        Toast.makeText(this.getApplicationContext(),"Beacon is setup",Toast.LENGTH_LONG);
+        Toast.makeText(this.getApplicationContext(),"BeaconObject is setup",Toast.LENGTH_LONG);
     }
 
     private void playAudio() throws IOException {

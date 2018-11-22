@@ -1,11 +1,10 @@
 package local.bft.dh.dhbftlocal;
 
 import android.content.Context;
-import android.net.DhcpInfo;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-import sg.gov.dh.trackers.Coords;
+import bft.utils.Coords;
 import sg.gov.dh.trackers.NavisensLocalTracker;
 
 

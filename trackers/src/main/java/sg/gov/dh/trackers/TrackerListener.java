@@ -1,5 +1,7 @@
 package sg.gov.dh.trackers;
 
+import bft.utils.Coords;
+
 /**
  * This interface allows parent classes (E.g. Map Provider's LocationDataSource class) to receive<br>
  * 1. New location updates<br>

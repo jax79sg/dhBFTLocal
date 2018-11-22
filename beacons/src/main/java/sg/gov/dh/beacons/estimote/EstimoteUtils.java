@@ -7,7 +7,7 @@ import android.graphics.Color;
 // Running into any issues? Drop us an email to: contact@estimote.com
 //
 
-class Utils {
+class EstimoteUtils {
 
     static String getShortIdentifier(String deviceIdentifier) {
         return deviceIdentifier.substring(0, 4) + "..." + deviceIdentifier.substring(28, 32);

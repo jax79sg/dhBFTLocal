@@ -15,6 +15,11 @@ public class BFTLocalPreferences {
     private double onePixelToMetres=(11.82/1400*250/100);
     private double mapScale=250; //1cm to 250cm
 
+    public double getBeaconActivateDistance(){
+        return Double.valueOf(this.prefs.getString(context.getResources().getString(R.string.estimoteDist),"null"));
+    }
+
+
     public String getBeaconAppId(){
         return this.prefs.getString(context.getResources().getString(R.string.estimoteId),"null");
     }

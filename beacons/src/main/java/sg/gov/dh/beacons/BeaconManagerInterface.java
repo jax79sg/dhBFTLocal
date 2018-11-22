@@ -7,22 +7,23 @@ import android.content.Context;
  * Allow parent classes to use 3rd party beacons without dwelling into individual beacon technologies.<br><br>
  * 3rd party beacons should implement this Interface and implement the 3rd party methods to achieve the methods defined in this Interface class.
  */
-public interface Beacons {
+public interface BeaconManagerInterface {
 
     void setParentContext(Activity context);
     void setAppId(String id);
     void setAppToken(String token);
+    void setDistActivate(double dist);
 
 
     /**
      * Provide an option to check for active status of beacon<br>
-     * To check on Beacon status (Active or not)
+     * To check on BeaconObject status (Active or not)
      * @return A boolean indicating Active (True) or not (False)
      */
     boolean isActive();
 
     /**
-     * Allow parent classes to access new Beacons updates triggered by the 3rd party beacon technologies.<br>
+     * Allow parent classes to access new BeaconManagerInterface updates triggered by the 3rd party beacon technologies.<br>
      * Implementaion of this Interface should simply assign the listener to a global private instance.<br>
      * this.listener = listener;
      * @param listener
@@ -51,7 +52,7 @@ public interface Beacons {
 
     /**
      * Some 3rd party beacons may have their own setup requirements, either headless or interactive.<br>
-     * Implementation of this interface should ensure setup of their Beacons and provide their own Activity to perform the actions. (E.g. By means of Intent)
+     * Implementation of this interface should ensure setup of their BeaconManagerInterface and provide their own Activity to perform the actions. (E.g. By means of Intent)
      */
     void setup();
 

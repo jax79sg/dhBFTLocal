@@ -1,10 +1,8 @@
 package local.bft.dh.dhbftlocal;
 
-
-
 import java.util.HashMap;
-
-import sg.gov.dh.trackers.Coords;
+import bft.utils.Coords;
+import sg.gov.dh.beacons.DroppedBeacon;
 
 public class BeaconZeroing {
     HashMap<String, DroppedBeacon> droppedBeacons = new HashMap();

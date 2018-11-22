@@ -1,7 +1,6 @@
 package sg.gov.dh.beacons.estimote;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,11 +18,11 @@ import java.util.Set;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
-import sg.gov.dh.beacons.Beacon;
+import sg.gov.dh.beacons.BeaconObject;
 import sg.gov.dh.beacons.BeaconListener;
-import sg.gov.dh.beacons.Beacons;
+import sg.gov.dh.beacons.BeaconManagerInterface;
 
-public class EstimoteBeacon implements Beacons {
+public class EstimoteBeaconManager implements BeaconManagerInterface {
 
     private ProximityObserver.Handler proximityObserverHandler;
     EstimoteCloudCredentials cloudCredentials =null;
@@ -32,9 +31,10 @@ public class EstimoteBeacon implements Beacons {
     private BeaconListener listener;
     double minDist = 3.0;
     Activity context = null;
+    String TAG = "EstimoteBeaconManager";
 
 
-    public EstimoteBeacon(){
+    public EstimoteBeaconManager(){
         this.context=context;
     }
 
@@ -51,6 +51,11 @@ public class EstimoteBeacon implements Beacons {
     @Override
     public void setAppToken(String token) {
         APPTOKEN=token;
+    }
+
+    @Override
+    public void setDistActivate(double dist) {
+        this.minDist=dist;
     }
 
     @Override
@@ -110,24 +115,26 @@ public class EstimoteBeacon implements Beacons {
                 .withBalancedPowerMode()
                 .build();
 
+        Log.d(TAG, "Setting up proximity zone for a range of " + minDist + " metres");
         ProximityZone zone = new ProximityZoneBuilder()
                 .forTag(APPID)
                 .inCustomRange(minDist)
                 .onContextChange(new Function1<Set<? extends ProximityZoneContext>, Unit>() {
                     @Override
                     public Unit invoke(Set<? extends ProximityZoneContext> contexts) {
+                        Log.d(TAG,"Detected beacon(s)!");
 
-                        List<ProximityContent> nearbyContent = new ArrayList<>(contexts.size());
-
+                        List<EstimoteProximityContent> nearbyContent = new ArrayList<>(contexts.size());
+                        Log.d(TAG,"Detected number of beacons == " + contexts.size());
                         for (ProximityZoneContext proximityContext : contexts) {
                             String title = proximityContext.getAttachments().get(APPID+"/title");
                             if (title == null) {
                                 title = "unknown";
                             }
-                            String subtitle = Utils.getShortIdentifier(proximityContext.getDeviceId());
+                            String subtitle = EstimoteUtils.getShortIdentifier(proximityContext.getDeviceId());
 
-                            nearbyContent.add(new ProximityContent(title, subtitle));
-                            listener.onNewUpdate(new Beacon(title));
+                            nearbyContent.add(new EstimoteProximityContent(title, subtitle));
+                            listener.onNewUpdate(new BeaconObject(title));
                         }
 
 

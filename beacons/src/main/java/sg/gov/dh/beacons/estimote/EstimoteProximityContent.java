@@ -4,12 +4,12 @@ package sg.gov.dh.beacons.estimote;
 // Running into any issues? Drop us an email to: contact@estimote.com
 //
 
-public class ProximityContent {
+public class EstimoteProximityContent {
 
     private String title;
     private String subtitle;
 
-    ProximityContent(String title, String subtitle) {
+    EstimoteProximityContent(String title, String subtitle) {
         this.title = title;
         this.subtitle = subtitle;
     }

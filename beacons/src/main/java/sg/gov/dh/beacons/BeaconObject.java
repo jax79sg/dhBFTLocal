@@ -1,10 +1,10 @@
 package sg.gov.dh.beacons;
 
-public class Beacon {
+public class BeaconObject {
     String event = null;
     String id = null;
 
-    public Beacon(String id)
+    public BeaconObject(String id)
     {
         setId(id);
     }

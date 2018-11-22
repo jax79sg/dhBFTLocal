@@ -128,4 +128,7 @@
 
     <string name="estimoteId">Estimote App ID</string>
     <string name="estimoteToken">Estimote App Token</string>
+    <string name="estimoteDist">Estimote Proximity activation distance (m))</string>
+
+
 </resources>

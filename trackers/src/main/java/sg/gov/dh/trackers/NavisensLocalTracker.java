@@ -10,6 +10,8 @@ import com.navisens.motiondnaapi.MotionDnaApplication;
 import com.navisens.motiondnaapi.MotionDnaInterface;
 import java.util.Map;
 
+import bft.utils.Coords;
+
 /**
  * The NAVISENS implementation of the Tracker Interface and NAVISENS's own API interface<br>
  * Note that this requires 'com.navisens:motiondnaapi:1.4.2' as dependancy in Gradle script.

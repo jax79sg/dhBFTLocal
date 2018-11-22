@@ -65,6 +65,15 @@
         android:defaultValue="35cd4baf21cdcc9feee14d0fb028c36d"
         android:title="@string/estimoteToken"/>
 
+    <EditTextPreference
+        android:key="@string/estimoteDist"
+        android:summary="Enter the distance in metres where Estimote Proximity beacon will activate"
+        android:defaultValue="3"
+        android:title="@string/estimoteDist"/>
+
+
+
+
     </PreferenceCategory>
 
 

@@ -30,5 +30,6 @@ dependencies {
     implementation project(':trackers')
     //    debugImplementation project(path: ':trackers')
     implementation project(':mq.rabbit')
-    implementation project(path: ':estimote')
+    implementation project(path: ':beacons')
+    implementation project(path: ':utils')
 }

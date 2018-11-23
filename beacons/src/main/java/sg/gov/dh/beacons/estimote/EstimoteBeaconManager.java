@@ -1,9 +1,17 @@
 package sg.gov.dh.beacons.estimote;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.tech.NfcF;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.estimote.coresdk.recognition.utils.DeviceId;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
 import com.estimote.proximity_sdk.api.EstimoteCloudCredentials;
@@ -12,6 +20,8 @@ import com.estimote.proximity_sdk.api.ProximityObserverBuilder;
 import com.estimote.proximity_sdk.api.ProximityZone;
 import com.estimote.proximity_sdk.api.ProximityZoneBuilder;
 import com.estimote.proximity_sdk.api.ProximityZoneContext;
+
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,8 +32,16 @@ import sg.gov.dh.beacons.BeaconObject;
 import sg.gov.dh.beacons.BeaconListener;
 import sg.gov.dh.beacons.BeaconManagerInterface;
 
+
+
 public class EstimoteBeaconManager implements BeaconManagerInterface {
 
+    PendingIntent pendingIntent;
+    IntentFilter ndef;
+    IntentFilter[] intentFiltersArray;
+    String[][] techListsArray;
+    private NfcAdapter nfcAdapter;
+    private Intent NfcIntent;
     private ProximityObserver.Handler proximityObserverHandler;
     EstimoteCloudCredentials cloudCredentials =null;
     String APPID="ong-xin-cai-s-proximity-fo-hm6";
@@ -59,6 +77,26 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
     }
 
     @Override
+    public String getBeaconIdbByNFC(NdefMessage nfcMsg) {
+        DeviceId beaconId = findBeaconId(nfcMsg);
+        return beaconId.toString().substring(1,beaconId.toString().length()-1);
+
+    }
+
+
+    public void disableForegroundDispatch() {
+        if (nfcAdapter!=null){
+            nfcAdapter.disableForegroundDispatch(this.context);
+        }
+
+    }
+
+
+    public void enableForegroundDispatch() {
+        nfcAdapter.enableForegroundDispatch(this.context, pendingIntent, null, null);
+    }
+
+    @Override
     public boolean isActive() {
         return false;
     }
@@ -76,6 +114,25 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
 
     @Override
     public void setup() {
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this.context);
+        pendingIntent = PendingIntent.getActivity(
+                this.context, 0, new Intent(this.context, this.context.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try {
+            ndef.addDataType("*/*");    /* Handles all MIME based dispatches.
+                                       You should specify only the ones that you need. */
+        }
+        catch (IntentFilter.MalformedMimeTypeException e) {
+            throw new RuntimeException("fail", e);
+        }
+        intentFiltersArray= new IntentFilter[] {ndef, };
+        techListsArray = new String[][] { new String[] { NfcF.class.getName() } };
+
+
+
+        NfcIntent = new Intent(this.context.getApplicationContext(), this.context.getClass());
+
+
         cloudCredentials = new EstimoteCloudCredentials(APPID, APPTOKEN);
 
         RequirementsWizardFactory
@@ -84,7 +141,7 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
                         new Function0<Unit>() {
                             @Override
                             public Unit invoke() {
-                                Log.d("app", "requirements fulfilled");
+                                Log.d(TAG, "requirements fulfilled");
                                 Toast.makeText(context.getApplicationContext(), "Estimote requirements satisfied",Toast.LENGTH_LONG);
                                 return null;
                             }
@@ -92,14 +149,14 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
                         new Function1<List<? extends Requirement>, Unit>() {
                             @Override
                             public Unit invoke(List<? extends Requirement> requirements) {
-                                Log.e("app", "requirements missing: " + requirements);
+                                Log.e(TAG, "requirements missing: " + requirements);
                                 return null;
                             }
                         },
                         new Function1<Throwable, Unit>() {
                             @Override
                             public Unit invoke(Throwable throwable) {
-                                Log.e("app", "requirements error: " + throwable);
+                                Log.e(TAG, "requirements error: " + throwable);
                                 return null;
                             }
                         });
@@ -108,7 +165,7 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
                 .onError(new Function1<Throwable, Unit>() {
                     @Override
                     public Unit invoke(Throwable throwable) {
-                        Log.e("app", "proximity observer error: " + throwable);
+                        Log.e(TAG, "proximity observer error: " + throwable);
                         return null;
                     }
                 })
@@ -119,22 +176,45 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
         ProximityZone zone = new ProximityZoneBuilder()
                 .forTag(APPID)
                 .inCustomRange(minDist)
+//                .onExit(new Function1<ProximityZoneContext, Unit>() {
+//                    @Override
+//                    public Unit invoke(ProximityZoneContext proximityZoneContext) {
+//                        String title = proximityZoneContext.getAttachments().get(APPID+"/title");
+//                        Log.d(TAG,"On Exit beacons == " + title);
+//                        if (title == null) {
+//                            title = "unknown";
+//                        }
+//                        listener.onNewUpdate(new BeaconObject(title));
+//                        return null;
+//                    }
+//                })
+                .onEnter(new Function1<ProximityZoneContext, Unit>() {
+                    @Override
+                    public Unit invoke(ProximityZoneContext proximityZoneContext) {
+                        String title = proximityZoneContext.getAttachments().get(APPID+"/title");
+                        Log.d(TAG,"On Enter beacons == " + title);
+                        if (title == null) {
+                            title = "unknown";
+                        }
+                        listener.onNewUpdate(new BeaconObject(title));
+                        return null;
+                    }
+                })
                 .onContextChange(new Function1<Set<? extends ProximityZoneContext>, Unit>() {
                     @Override
                     public Unit invoke(Set<? extends ProximityZoneContext> contexts) {
-                        Log.d(TAG,"Detected beacon(s)!");
-
                         List<EstimoteProximityContent> nearbyContent = new ArrayList<>(contexts.size());
-                        Log.d(TAG,"Detected number of beacons == " + contexts.size());
+                        Log.d(TAG,"On Context Change beacons == " + contexts.size());
                         for (ProximityZoneContext proximityContext : contexts) {
                             String title = proximityContext.getAttachments().get(APPID+"/title");
                             if (title == null) {
                                 title = "unknown";
                             }
-                            String subtitle = EstimoteUtils.getShortIdentifier(proximityContext.getDeviceId());
-
+//                            String subtitle = EstimoteUtils.getShortIdentifier(proximityContext.getDeviceId());
+                            String subtitle = proximityContext.getDeviceId();
+                            Log.d(TAG,title+"="+subtitle);
                             nearbyContent.add(new EstimoteProximityContent(title, subtitle));
-                            listener.onNewUpdate(new BeaconObject(title));
+                            listener.onNewUpdate(new BeaconObject(subtitle));
                         }
 
 
@@ -145,4 +225,19 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
 
         proximityObserverHandler = proximityObserver.startObserving(zone);
     }
+
+
+    private static DeviceId findBeaconId(NdefMessage msg) {
+        NdefRecord[] records = msg.getRecords();
+        for (NdefRecord record : records) {
+            if (record.getTnf() == NdefRecord.TNF_EXTERNAL_TYPE) {
+                String type = new String(record.getType(), Charset.forName("ascii"));
+                if ("estimote.com:id".equals(type)) {
+                    return DeviceId.fromBytes(record.getPayload());
+                }
+            }
+        }
+        return null;
+    }
+
 }

@@ -1,7 +1,7 @@
 package sg.gov.dh.beacons;
 
 import android.app.Activity;
-import android.content.Context;
+import android.nfc.NdefMessage;
 
 /**
  * Allow parent classes to use 3rd party beacons without dwelling into individual beacon technologies.<br><br>
@@ -13,6 +13,9 @@ public interface BeaconManagerInterface {
     void setAppId(String id);
     void setAppToken(String token);
     void setDistActivate(double dist);
+    String getBeaconIdbByNFC(NdefMessage nfcMsg);
+    void disableForegroundDispatch();
+    void enableForegroundDispatch();
 
 
     /**

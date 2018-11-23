@@ -29,6 +29,7 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
     double currentX = 0.0;
     double currentY = 0.0;
     double currentZ = 0.0;
+    double currentBearing = 0.0;
 
     /**
      * Do not change this.
@@ -252,6 +253,7 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
         double localHeading = convertRightToLeftHeading(righthandlocalHeading);
         this.currentX=x;
         this.currentY=y;
+        this.currentBearing=localHeading;
         performTrackingHeightOffsetAdjustment(z);
         Log.i(TAG,"X:"+x + " Y:"+y + " Z:"+z + " Heading:" + localHeading + " locStatus:"+ locStatus + "VerticalMotion:" + verticalMotion + " EstimatedMotion:" + motionType);
         listener.onNewCoords(new Coords(0,0,this.mapHeight,localHeading,(float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, x, y, motionType));
@@ -324,7 +326,7 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
 
     public Coords getCurrentXYZLocation()
     {
-        Coords coord = new Coords(0.0, 0.0, 0.0, 0.0, 0,0, 0, this.currentX, this.currentY, "");
+        Coords coord = new Coords(0.0, 0.0, this.currentZ, this.currentBearing, 0,0, 0, this.currentX, this.currentY, "");
         return coord;
     }
 

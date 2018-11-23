@@ -1,8 +1,15 @@
 package local.bft.dh.dhbftlocal;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.tech.NfcF;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 
 import dh.gov.sg.mq.rabbitmq.MQRabbit;
@@ -38,11 +46,13 @@ public class MainActivity extends AppCompatActivity {
     double mapHeight=0.0;
     double newHeight=0.0;
     double currentOffset=0.0;
-
+    String SOUND_BEACON_DETECT="to-the-point.mp3";
+    String SOUND_BEACON_DROP="drop.mp3";
     MQRabbit mqRabbit = null;
     NavisensLocalTracker tracker=null;
     WebView myWebView=null;
     BFTLocalPreferences prefs =null;
+    BeaconManagerInterface beaconManager=null;
     BeaconZeroing beaconZeroing = null;
     String TAG = "BFTLOCAL";
     private void initTracker()
@@ -160,13 +170,26 @@ public class MainActivity extends AppCompatActivity {
         this.beaconZeroing.dropBeacon(coords,"mint");
         this.beaconZeroing.dropBeacon(coords,"coconut");
         this.beaconZeroing.dropBeacon(coords,"blueberry");
+    }
 
+    private void placeBeacon(String beaconId) {
+        Coords coords = this.tracker.getCurrentXYZLocation();
+        this.beaconZeroing.dropBeacon(coords, beaconId);
+        Log.d(TAG,"Placed Beacon ID " + beaconId + " on " + coords.getX() + ","+coords.getY()+","+coords.getAltitude());
+        try {
+            playAudio(SOUND_BEACON_DROP);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initBeacon() {
+
+
+
         beaconZeroing = new BeaconZeroing();
-        BeaconManagerInterface beacon = new EstimoteBeaconManager();
-        beacon.setBeaconListener(new BeaconListener() {
+        beaconManager = new EstimoteBeaconManager();
+        beaconManager.setBeaconListener(new BeaconListener() {
             @Override
             public void onNewUpdate(BeaconObject beacon) {
                 Log.d(TAG,"Detected beacon with ID: " + beacon.getId());
@@ -176,10 +199,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG,"Beacon " + beacon.getId() +  " is recognized, zeroing location");
                     Coords coord = droppedBeacon.getCoords();
                     coord.setAltitude(tracker.getCurrentXYZLocation().getAltitude()); //Effectively ignoring the alt info from beacon
+                    coord.setBearing(tracker.getCurrentXYZLocation().getBearing());
                     tracker.setManualLocation(coord);
 
                     try {
-                        playAudio();
+                        playAudio(SOUND_BEACON_DETECT);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -191,16 +215,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        beacon.setAppId(prefs.getBeaconAppId());
-        beacon.setAppToken(prefs.getBeaconToken());
-        beacon.setDistActivate(prefs.getBeaconActivateDistance());
-        beacon.setParentContext(this);
-        beacon.setup();
+        beaconManager.setAppId(prefs.getBeaconAppId());
+        beaconManager.setAppToken(prefs.getBeaconToken());
+        beaconManager.setDistActivate(prefs.getBeaconActivateDistance());
+        beaconManager.setParentContext(this);
+        beaconManager.setup();
         Toast.makeText(this.getApplicationContext(),"BeaconObject is setup",Toast.LENGTH_LONG);
     }
 
-    private void playAudio() throws IOException {
-        AssetFileDescriptor afd = getAssets().openFd("to-the-point.mp3");
+    private void playAudio(String audioName) throws IOException {
+        AssetFileDescriptor afd = getAssets().openFd(audioName);
         MediaPlayer player = new MediaPlayer();
         player.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
         player.prepare();
@@ -254,4 +278,34 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    public void onPause() {
+        super.onPause();
+        beaconManager.disableForegroundDispatch();
+    }
+
+    public void onResume() {
+        super.onResume();
+        beaconManager.enableForegroundDispatch();
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
+                    NfcAdapter.EXTRA_NDEF_MESSAGES);
+            if (rawMsgs != null) {
+                for (int i = 0; i < rawMsgs.length; i++) {
+                    NdefMessage msg = (NdefMessage) rawMsgs[i];
+                    String beaconId = beaconManager.getBeaconIdbByNFC(msg);
+                    Log.d(TAG,"NFC: Received Beacon ID " + beaconId);
+                    placeBeacon(beaconId);
+
+                }
+            }
+            return;
+//        }
+    }
+
+
 }

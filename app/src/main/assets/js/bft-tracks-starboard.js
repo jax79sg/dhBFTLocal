@@ -23,6 +23,7 @@ function initRabbit(mqAddress, username, password, topic, port){
                 updateTarget(message);
             }
         }, { id: 'starboard' });
+        client.send(mqTopic, {}, '0,0,0,0,0,BEACONREQUEST,0');
     };
     var on_error =  function(error) {
         console.log(error);
@@ -96,8 +97,10 @@ function updateTarget(message)
             var marker=null;
             if (action=='FORWARD'){
                 marker = getCustomMarker(x, alt, 'walking', user, true, 0);
-            }else {
+            }else if (action=='FIDGETING' | action=='STATIONARY'){
                 marker = getCustomMarker(x, alt, 'standing', user, true, 0);
+            }else if (action=='BEACONDROP'){
+                marker = getCustomMarker(x, alt, 'null', user, true, 0);
             }
 
             // var marker = getCustomMarker(y, alt, 'walking', user, true, bearing);
@@ -116,8 +119,10 @@ function updateTarget(message)
         var marker=null;
         if (action=='FORWARD'){
             marker = getCustomMarker(x, alt, 'walking', user, true, 0);
-        }else {
+        }else if (action=='FIDGETING' | action=='STATIONARY'){
             marker = getCustomMarker(x, alt, 'standing', user, true, 0);
+        }else if (action=='BEACONDROP'){
+            marker = getCustomMarker(x, alt, 'null', user, true, 0);
         }
         // var marker = getCustomMarker(y, alt, 'walking', user, true, bearing);
         marker.addTo(map0);

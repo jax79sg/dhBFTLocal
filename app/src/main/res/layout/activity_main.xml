@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:layout_marginTop="200dp"
-                    android:text="EditText"
+                    android:text="Loading coordinates"
                     android:textColor="#ffffff"/>
 
                 <EditText
@@ -77,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:layout_marginTop="220dp"
-                    android:text="EditText"
+                    android:text="Loading Bearing"
                     android:textColor="#ffffff"/>
 
                 <EditText
@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:layout_marginTop="260dp"
-                    android:text="EditText"
+                    android:text="Loading status"
                     android:textColor="#ffffff"/>
 
             </FrameLayout>

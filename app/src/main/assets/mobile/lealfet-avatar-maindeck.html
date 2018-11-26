@@ -27,6 +27,7 @@
 <body>
 Main deck
 <div id="mapdeck"></div>
+</body>
 <script>
     var lowestHeight=0.0
     var highestHeight=1.35
@@ -44,7 +45,7 @@ Main deck
     var map0=loadLeaflet(imageoverlay,lowerleftx,lowerlefty,upperrightx,upperrighty, initialx,initialy,initialzoom);
 
 
-    getCustomMarker(0,0,null,'P0',true,0).addTo(map0);
+    // getCustomMarker(0,0,null,'P0',true,0).addTo(map0);
     // getCustomMarker(5.44*250/100,0,null,'P20',true,0).addTo(map0);
     // getCustomMarker(11.84*250/100,0,null,'P40',true,0).addTo(map0);
     // getCustomMarker(18.24*250/100,0,null,'P60',true,0).addTo(map0);
@@ -53,7 +54,7 @@ Main deck
     // getCustomMarker(50.21*250/100,0,null,'P160',true,0).addTo(map0);
     // getCustomMarker(55.99*250/100,0,null,'P180',true,0).addTo(map0);
     // getCustomMarker(61.37*250/100,0,null,'P200',true,0).addTo(map0);
-    getCustomMarker(66.16*250/100,0,null,'P220',true,0).addTo(map0);
+    // getCustomMarker(66.16*250/100,0,null,'P220',true,0).addTo(map0);
 
     var mqSettings=Android.getMQSettings();
     mqSettingsArray=mqSettings.split(',');
@@ -80,6 +81,6 @@ Main deck
     });
 
 
+
 </script>
-</body>
 </html>

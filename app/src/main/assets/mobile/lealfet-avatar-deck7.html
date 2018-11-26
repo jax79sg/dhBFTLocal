@@ -47,7 +47,7 @@ Deck 7
     var map0=loadLeaflet(imageoverlay,lowerleftx,lowerlefty,upperrightx,upperrighty, initialx,initialy,initialzoom);
 
 
-    getCustomMarker(0,0,'null','P0',true,90).addTo(map0);
+    // getCustomMarker(0,0,'null','P0',true,90).addTo(map0);
     // getCustomMarker(5.44*250/100,0,'standing','P20',true,0).addTo(map0);
     // getCustomMarker(11.84*250/100,0,null,'P40',true,0).addTo(map0);
     // getCustomMarker(18.24*250/100,0,null,'P60',true,0).addTo(map0);
@@ -56,7 +56,7 @@ Deck 7
     // getCustomMarker(50.21*250/100,0,null,'P160',true,0).addTo(map0);
     // getCustomMarker(55.99*250/100,0,null,'P180',true,0).addTo(map0);
     // getCustomMarker(61.37*250/100,0,null,'P200',true,0).addTo(map0);
-    getCustomMarker(66.16*250/100,0,null,'P220',true,0).addTo(map0);
+    // getCustomMarker(66.16*250/100,0,null,'P220',true,0).addTo(map0);
     var mqSettings=Android.getMQSettings();
     mqSettingsArray=mqSettings.split(',');
     mqAddress=mqSettingsArray[0];
@@ -80,6 +80,7 @@ Deck 7
         var y=e.latlng.lat;
         Android.manualLocationUpdateinPixels(x + "," + y+",17.35");
     });
+
 </script>
 </body>
 </html>

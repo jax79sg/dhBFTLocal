@@ -1,8 +1,14 @@
 package dh.gov.sg.mq.rabbitmq;
 
+import android.util.Log;
+
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,6 +33,8 @@ public class MQRabbit {
 
     private String routingKey = "123";
     private int counter=0;
+
+    private MQListener mqListener;
 
     public MQRabbit()
     {
@@ -128,10 +136,36 @@ public class MQRabbit {
             channel.exchangeDeclare(exchangeName, "fanout", true);
             channel.queueDeclare(queueName, true, false, false, args);
             channel.queueBind(queueName, exchangeName, routingKey);
+
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public void setListener(MQListener listener)
+    {
+        mqListener=listener;
+        Consumer consumer = new DefaultConsumer(channel){
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope,
+                                       AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String message = new String(body, "UTF-8");
+                String[] messageArray=message.split(",");
+                String action =messageArray[5];
+                Log.d(TAG," [x] Received '" + message + "'");
+                mqListener.onNewMessage(message);
+            }
+        };
+        try {
+            channel.basicConsume(queueName, true, consumer);
+            Log.d(TAG,"Listening to MQ Queue " + queueName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean sendMessage(String message) throws IOException {

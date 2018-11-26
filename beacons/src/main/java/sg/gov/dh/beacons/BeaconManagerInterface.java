@@ -9,7 +9,6 @@ import android.nfc.NdefMessage;
  */
 public interface BeaconManagerInterface {
 
-    void setParentContext(Activity context);
     void setAppId(String id);
     void setAppToken(String token);
     void setDistActivate(double dist);

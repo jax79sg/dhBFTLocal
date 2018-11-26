@@ -54,4 +54,10 @@ public class WebAppInterface {
         return message;
     }
 
+    @JavascriptInterface
+    public String getDroppedBeacons()
+    {
+        return null;
+    }
+
 }

@@ -36,28 +36,29 @@ import sg.gov.dh.beacons.BeaconManagerInterface;
 
 public class EstimoteBeaconManager implements BeaconManagerInterface {
 
+    //Following will support Estimote's NFC features
     PendingIntent pendingIntent;
     IntentFilter ndef;
     IntentFilter[] intentFiltersArray;
     String[][] techListsArray;
     private NfcAdapter nfcAdapter;
     private Intent NfcIntent;
+
+    //Following will support Estimote's general features.
     private ProximityObserver.Handler proximityObserverHandler;
     EstimoteCloudCredentials cloudCredentials =null;
-    String APPID="ong-xin-cai-s-proximity-fo-hm6";
-    String APPTOKEN="35cd4baf21cdcc9feee14d0fb028c36d";
+    String APPID;
+    String APPTOKEN;
     private BeaconListener listener;
-    double minDist = 3.0;
+    double minDist;
     Activity context = null;
     String TAG = "EstimoteBeaconManager";
 
-
-    public EstimoteBeaconManager(){
-        this.context=context;
+    public EstimoteBeaconManager(Activity context){
+        this.setParentContext(context);
     }
 
-    @Override
-    public void setParentContext(Activity context) {
+    private void setParentContext(Activity context) {
         this.context=context;
     }
 
@@ -79,7 +80,7 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
     @Override
     public String getBeaconIdbByNFC(NdefMessage nfcMsg) {
         DeviceId beaconId = findBeaconId(nfcMsg);
-        return beaconId.toString().substring(1,beaconId.toString().length()-1);
+        return beaconId.toString().substring(1,4);
 
     }
 
@@ -88,7 +89,6 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
         if (nfcAdapter!=null){
             nfcAdapter.disableForegroundDispatch(this.context);
         }
-
     }
 
 
@@ -114,27 +114,13 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
 
     @Override
     public void setup() {
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this.context);
-        pendingIntent = PendingIntent.getActivity(
-                this.context, 0, new Intent(this.context, this.context.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        try {
-            ndef.addDataType("*/*");    /* Handles all MIME based dispatches.
-                                       You should specify only the ones that you need. */
-        }
-        catch (IntentFilter.MalformedMimeTypeException e) {
-            throw new RuntimeException("fail", e);
-        }
-        intentFiltersArray= new IntentFilter[] {ndef, };
-        techListsArray = new String[][] { new String[] { NfcF.class.getName() } };
-
-
-
-        NfcIntent = new Intent(this.context.getApplicationContext(), this.context.getClass());
-
-
         cloudCredentials = new EstimoteCloudCredentials(APPID, APPTOKEN);
+        setupEstimoteRequirements();
+        setupNFC();
+        setupProximity();
+    }
 
+    private void setupEstimoteRequirements() {
         RequirementsWizardFactory
                 .createEstimoteRequirementsWizard()
                 .fulfillRequirements(context,
@@ -160,16 +146,21 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
                                 return null;
                             }
                         });
+    }
 
+    private void setupProximity() {
         ProximityObserver proximityObserver = new ProximityObserverBuilder(context.getApplicationContext(), cloudCredentials)
                 .onError(new Function1<Throwable, Unit>() {
                     @Override
                     public Unit invoke(Throwable throwable) {
                         Log.e(TAG, "proximity observer error: " + throwable);
+                        Toast.makeText(context.getApplicationContext(),"BLUETOOTH ERROR, try disabling and re-enable BT, then restart",Toast.LENGTH_LONG);
                         return null;
                     }
                 })
-                .withBalancedPowerMode()
+                .withLowLatencyPowerMode()
+                .withEstimoteSecureMonitoringDisabled()
+                .withTelemetryReportingDisabled()
                 .build();
 
         Log.d(TAG, "Setting up proximity zone for a range of " + minDist + " metres");
@@ -192,11 +183,12 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
                     @Override
                     public Unit invoke(ProximityZoneContext proximityZoneContext) {
                         String title = proximityZoneContext.getAttachments().get(APPID+"/title");
-                        Log.d(TAG,"On Enter beacons == " + title);
+                        String subtitle = proximityZoneContext.getDeviceId().substring(0,3);
+                        Log.d(TAG,"On Enter beacons == " + title + "/" + subtitle);
                         if (title == null) {
                             title = "unknown";
                         }
-                        listener.onNewUpdate(new BeaconObject(title));
+                        listener.onNewUpdate(new BeaconObject(subtitle));
                         return null;
                     }
                 })
@@ -211,10 +203,11 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
                                 title = "unknown";
                             }
 //                            String subtitle = EstimoteUtils.getShortIdentifier(proximityContext.getDeviceId());
-                            String subtitle = proximityContext.getDeviceId();
-                            Log.d(TAG,title+"="+subtitle);
-                            nearbyContent.add(new EstimoteProximityContent(title, subtitle));
+                            String subtitle = proximityContext.getDeviceId().substring(0,3);
+                            Log.d(TAG,"On Context Change " + title+"="+subtitle);
                             listener.onNewUpdate(new BeaconObject(subtitle));
+//                            nearbyContent.add(new EstimoteProximityContent(title, subtitle));
+//                            listener.onNewUpdate(new BeaconObject(subtitle));
                         }
 
 
@@ -224,6 +217,24 @@ public class EstimoteBeaconManager implements BeaconManagerInterface {
                 .build();
 
         proximityObserverHandler = proximityObserver.startObserving(zone);
+
+    }
+
+    private void setupNFC() {
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this.context);
+        pendingIntent = PendingIntent.getActivity(
+                this.context, 0, new Intent(this.context, this.context.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try {
+            ndef.addDataType("*/*");    /* Handles all MIME based dispatches.
+                                       You should specify only the ones that you need. */
+        }
+        catch (IntentFilter.MalformedMimeTypeException e) {
+            throw new RuntimeException("fail", e);
+        }
+        intentFiltersArray= new IntentFilter[] {ndef, };
+        techListsArray = new String[][] { new String[] { NfcF.class.getName() } };
+        NfcIntent = new Intent(this.context.getApplicationContext(), this.context.getClass());
     }
 
 

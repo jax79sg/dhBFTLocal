@@ -1,14 +1,10 @@
 package local.bft.dh.dhbftlocal;
 
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.tech.NfcF;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,11 +19,11 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
+import dh.gov.sg.mq.rabbitmq.MQListener;
 import dh.gov.sg.mq.rabbitmq.MQRabbit;
 import sg.gov.dh.beacons.BeaconObject;
 import sg.gov.dh.beacons.BeaconListener;
@@ -48,12 +44,12 @@ public class MainActivity extends AppCompatActivity {
     double currentOffset=0.0;
     String SOUND_BEACON_DETECT="to-the-point.mp3";
     String SOUND_BEACON_DROP="drop.mp3";
-    MQRabbit mqRabbit = null;
-    NavisensLocalTracker tracker=null;
-    WebView myWebView=null;
-    BFTLocalPreferences prefs =null;
-    BeaconManagerInterface beaconManager=null;
-    BeaconZeroing beaconZeroing = null;
+    MQRabbit mqRabbit;
+    NavisensLocalTracker tracker;
+    WebView myWebView;
+    BFTLocalPreferences prefs ;
+    BeaconManagerInterface beaconManager;
+    BeaconZeroing beaconZeroing ;
     String TAG = "BFTLOCAL";
     private void initTracker()
     {
@@ -78,13 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        Toast.makeText(this.getApplicationContext(),"Tracker setup complete",Toast.LENGTH_LONG).show();
     }
 
-
-    private void runTracker()
-    {
-
-    }
 
     private void showCoords(Coords coords) {
         final EditText textXYZ = findViewById(R.id.textXYZ);
@@ -103,6 +95,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"Calling JAVASCRIPT with " + message);
         myWebView.evaluateJavascript("javascript: " +"androidToJSupdateLocation(\""+message+"\")", null);
 
+    }
+
+    private void updateMapOfBeacon(Coords coords, String beaconId) {
+        // Android to Javascript
+        String message = coords.getX()+","+coords.getY()+","+coords.getAltitude()+","+coords.getBearing()+","+beaconId+","+ BeaconZeroing.BEACONOBJ;
+        Log.d(TAG,"Calling JAVASCRIPT with " + message);
+        myWebView.evaluateJavascript("javascript: " +"androidToJSupdateLocation(\""+message+"\")", null);
     }
 
     @Override
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setupMessageQueue();
-        runTracker();
+
 
     }
 
@@ -175,7 +174,10 @@ public class MainActivity extends AppCompatActivity {
     private void placeBeacon(String beaconId) {
         Coords coords = this.tracker.getCurrentXYZLocation();
         this.beaconZeroing.dropBeacon(coords, beaconId);
+        updateMapOfBeacon(coords,beaconId);
+        sendBeacon(coords,beaconId);
         Log.d(TAG,"Placed Beacon ID " + beaconId + " on " + coords.getX() + ","+coords.getY()+","+coords.getAltitude());
+        Toast.makeText(this.getApplicationContext(),"Placed Beacon ID " + beaconId + " on " + coords.getX() + ","+coords.getY()+","+coords.getAltitude(),Toast.LENGTH_LONG).show();
         try {
             playAudio(SOUND_BEACON_DROP);
         } catch (IOException e) {
@@ -184,11 +186,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initBeacon() {
-
-
-
         beaconZeroing = new BeaconZeroing();
-        beaconManager = new EstimoteBeaconManager();
+        beaconManager = new EstimoteBeaconManager(this);
         beaconManager.setBeaconListener(new BeaconListener() {
             @Override
             public void onNewUpdate(BeaconObject beacon) {
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     Log.d(TAG,"Beacon " + beacon.getId() +  " is recognized, zeroing location");
                     Coords coord = droppedBeacon.getCoords();
-                    coord.setAltitude(tracker.getCurrentXYZLocation().getAltitude()); //Effectively ignoring the alt info from beacon
+//                    coord.setAltitude(tracker.getCurrentXYZLocation().getAltitude()); //Effectively ignoring the alt info from beacon
                     coord.setBearing(tracker.getCurrentXYZLocation().getBearing());
                     tracker.setManualLocation(coord);
 
@@ -218,9 +217,8 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.setAppId(prefs.getBeaconAppId());
         beaconManager.setAppToken(prefs.getBeaconToken());
         beaconManager.setDistActivate(prefs.getBeaconActivateDistance());
-        beaconManager.setParentContext(this);
         beaconManager.setup();
-        Toast.makeText(this.getApplicationContext(),"BeaconObject is setup",Toast.LENGTH_LONG);
+        Toast.makeText(this.getApplicationContext(),"Beacon setup complete",Toast.LENGTH_LONG).show();
     }
 
     private void playAudio(String audioName) throws IOException {
@@ -241,22 +239,76 @@ public class MainActivity extends AppCompatActivity {
         else
         {
             mqRabbit = new MQRabbit();
+
             Log.d(TAG, "Connecting to MQ on " +host);
             boolean isSuccess = mqRabbit.connect(host, prefs.getMqUsername(), prefs.getMqPassword());
+            if (isSuccess)
+            {
+                Toast.makeText(this.getApplicationContext(),"RabbitMQ setup complete",Toast.LENGTH_SHORT).show();
+                setupMQListener();
+            }else
+            {
+                Toast.makeText(this.getApplicationContext(),"RabbitMQ failed. C2 capabilities disabled",Toast.LENGTH_SHORT).show();
+            }
             Log.d(TAG, "Connection to MQ is successful: " + isSuccess);
         }
     }
 
+    /**
+     * This will setup a MQ listener for requests to mq send all beacons known to this device.
+     */
+    private void setupMQListener()
+    {
+        mqRabbit.setListener(new MQListener() {
+            @Override
+            public void onNewMessage(String message) {
+                String[] messageArray = message.split(",");
+                String action = messageArray[5];
+                if (action.equals(BeaconZeroing.BEACONREQ))
+                {
+                    Log.d(TAG,"Loading Beacons to send");
+                    ArrayList<DroppedBeacon> droppedBeaconsList = beaconZeroing.getAllDroppedbeacons();
+                    for (int i=0;i<droppedBeaconsList.size();i++)
+                    {
+                        Log.d(TAG,"BEACON SEND");
+                        sendBeacon(droppedBeaconsList.get(i).getCoords(),droppedBeaconsList.get(i).getId());
+                    }
+
+                }
+                else  if (action.equals(BeaconZeroing.BEACONOBJ))
+                {
+                    Log.d(TAG,"Add this beacon in if its not here");
+                    String x = messageArray[0];
+                    String y = messageArray[1];
+                    String z = messageArray[2];
+                    String bearing = messageArray[3];
+                    String beaconId = messageArray[4];
+                    if (beaconZeroing.getBeacon(beaconId)==null)
+                    {
+                        Log.d(TAG,"Beacon not here, adding it");
+                        beaconZeroing.dropBeacon(new Coords(0.0, 0.0, Double.valueOf(z), Double.valueOf(bearing), 0,0, 0, Double.valueOf(x), Double.valueOf(y), ""), beaconId);
+                    }
+                }
+            }
+        });
+    }
+
     private void sendCoords(Coords _coords)
     {
-
         try {
             mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getAltitude()+","+_coords.getBearing()+","+prefs.getName()+","+_coords.getAction());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-
+    private void sendBeacon(Coords _coords, String beaconId)
+    {
+        try {
+            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getAltitude()+","+_coords.getBearing()+","+beaconId+","+BeaconZeroing.BEACONOBJ);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -292,15 +344,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onNewIntent(Intent intent) {
+        Log.d(TAG,"NFC: New Intent") ;
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                     NfcAdapter.EXTRA_NDEF_MESSAGES);
+            Log.d(TAG, "NFC: RawMsg is " + rawMsgs);
             if (rawMsgs != null) {
                 for (int i = 0; i < rawMsgs.length; i++) {
                     NdefMessage msg = (NdefMessage) rawMsgs[i];
                     String beaconId = beaconManager.getBeaconIdbByNFC(msg);
                     Log.d(TAG,"NFC: Received Beacon ID " + beaconId);
                     placeBeacon(beaconId);
-
                 }
             }
             return;

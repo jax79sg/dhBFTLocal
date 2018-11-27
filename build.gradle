@@ -8,6 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -19,6 +20,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url 'http://jax79sg.hopto.org:18081/artifactory/libs-release-local'
+        }
     }
 }
 

@@ -28,7 +28,6 @@ android {
 }
 
 dependencies {
-    implementation project(':trxapi')
     api 'com.navisens:motiondnaapi:1.7.3'
-    implementation project(path: ':utils')
+    implementation 'bft.utils:utils:1.0.0'
 }

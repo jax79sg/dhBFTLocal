@@ -3,7 +3,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
 def packageName = 'sg.gov.dh.utils'
-def libraryVersion = '1.0.0'
+def libraryVersion = '1.0.1'
 
 android {
     compileSdkVersion 28

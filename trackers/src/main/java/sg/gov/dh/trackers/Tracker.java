@@ -1,6 +1,6 @@
 package sg.gov.dh.trackers;
 
-import bft.utils.Coords;
+import sg.gov.dh.utils.Coords;
 
 /**
  * Allow parent classes (E.g. Map Provider's LocationDataSource class) to use 3rd party personnel trackers without dwelling into individual tracker technologies.<br><br>

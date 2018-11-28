@@ -23,14 +23,14 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import dh.gov.sg.mq.rabbitmq.MQListener;
-import dh.gov.sg.mq.rabbitmq.MQRabbit;
+import sg.gov.dh.mq.MQListener;
+import sg.gov.dh.mq.rabbitmq.MQRabbit;
 import sg.gov.dh.beacons.BeaconObject;
 import sg.gov.dh.beacons.BeaconListener;
 import sg.gov.dh.beacons.BeaconManagerInterface;
 import sg.gov.dh.beacons.DroppedBeacon;
 import sg.gov.dh.beacons.estimote.EstimoteBeaconManager;
-import bft.utils.Coords;
+import sg.gov.dh.utils.Coords;
 import sg.gov.dh.trackers.Event;
 import sg.gov.dh.trackers.NavisensLocalTracker;
 import sg.gov.dh.trackers.TrackerListener;

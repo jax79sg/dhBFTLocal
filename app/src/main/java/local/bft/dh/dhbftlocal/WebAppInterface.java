@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-import bft.utils.Coords;
+import sg.gov.dh.utils.Coords;
 import sg.gov.dh.trackers.NavisensLocalTracker;
 
 

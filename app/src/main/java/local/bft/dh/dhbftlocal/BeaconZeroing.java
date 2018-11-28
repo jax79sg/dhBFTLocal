@@ -2,7 +2,7 @@ package local.bft.dh.dhbftlocal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import bft.utils.Coords;
+import sg.gov.dh.utils.Coords;
 import sg.gov.dh.beacons.DroppedBeacon;
 
 public class BeaconZeroing {

@@ -3,7 +3,7 @@ Upon importing of the Trackers module, you should be able to perform the followi
 
 Do the following in your activity class
 '''
-import bft.utils.Coords;
+import sg.gov.dh.utils.Coords;
 import sg.gov.dh.trackers.Event;
 import sg.gov.dh.trackers.NavisensLocalTracker;
 import sg.gov.dh.trackers.TrackerListener;

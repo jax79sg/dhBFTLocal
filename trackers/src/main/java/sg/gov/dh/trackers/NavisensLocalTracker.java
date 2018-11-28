@@ -10,7 +10,7 @@ import com.navisens.motiondnaapi.MotionDnaApplication;
 import com.navisens.motiondnaapi.MotionDnaInterface;
 import java.util.Map;
 
-import bft.utils.Coords;
+import sg.gov.dh.utils.Coords;
 
 /**
  * The NAVISENS implementation of the Tracker Interface and NAVISENS's own API interface<br>

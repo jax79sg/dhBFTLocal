@@ -21,7 +21,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import sg.gov.dh.mq.MQListener;
 import sg.gov.dh.mq.rabbitmq.MQRabbit;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG,"Z:"+coords.getAltitude());
                 Log.d(TAG,"bearing:"+coords.getBearing());
                 Log.d(TAG,"Action:"+coords.getAction());
+                Log.d(TAG,"RealAlt:" + coords.getLatitude());
 
                 updateMap(coords);
                 sendCoords(coords);
@@ -296,7 +299,10 @@ public class MainActivity extends AppCompatActivity {
     private void sendCoords(Coords _coords)
     {
         try {
-            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getAltitude()+","+_coords.getBearing()+","+prefs.getName()+","+_coords.getAction());
+            String pattern = "yyyyMMddHHmmss";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            String date = simpleDateFormat.format(new Date());
+            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getAltitude()+","+_coords.getBearing()+","+prefs.getName()+","+_coords.getAction()+","+_coords.getLatitude()+","+date);
         } catch (IOException e) {
             e.printStackTrace();
         }

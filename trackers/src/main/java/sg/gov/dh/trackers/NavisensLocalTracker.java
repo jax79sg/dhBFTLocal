@@ -257,7 +257,7 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
         this.currentZ=this.mapHeight;
         performTrackingHeightOffsetAdjustment(z);
         Log.i(TAG,"X:"+x + " Y:"+y + " Z:"+z + " Heading:" + localHeading + " locStatus:"+ locStatus + "VerticalMotion:" + verticalMotion + " EstimatedMotion:" + motionType);
-        listener.onNewCoords(new Coords(0,0,this.mapHeight,localHeading,(float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, x, y, motionType));
+        listener.onNewCoords(new Coords(z,z,this.mapHeight,localHeading,(float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, x, y, motionType));
 
     }
 

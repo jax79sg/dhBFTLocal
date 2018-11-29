@@ -60,6 +60,7 @@
                     android:layout_height="40dp"
                     android:layout_gravity="right"
                     android:layout_marginTop="140dp"
+                    android:visibility="invisible"
                     app:srcCompat="@android:drawable/btn_star" />
 
                 <EditText
@@ -84,8 +85,8 @@
                     android:id="@+id/textAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginTop="260dp"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="240dp"
                     android:text="Loading status"
                     android:textColor="#ffffff"/>
 

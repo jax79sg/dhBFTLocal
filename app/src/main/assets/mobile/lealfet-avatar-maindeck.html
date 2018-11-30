@@ -29,8 +29,8 @@ Main deck
 <div id="mapdeck"></div>
 </body>
 <script>
-    var lowestHeight=0.0
-    var highestHeight=1.35
+    var lowestHeight=0.0;
+    var highestHeight=1.35;
     var pxWidth = 8240; //Width of GA cut out
     var metreWidth = (69.66*250)/100; //Width measure from GA cut out
     var factor = pxWidth/metreWidth;
@@ -77,7 +77,8 @@ Main deck
         var x=e.latlng.lng;     //Leaflet represents xy in the opposite way
         var y=e.latlng.lat;
         console.log("onPress: "+ x + " , " + y);
-        Android.manualLocationUpdateinPixels(x + "," + y + ",0" );
+        mapHeight=((highestHeight-lowestHeight)/2)+lowestHeight;
+        Android.manualLocationUpdateinPixels(x + "," + y+","+mapHeight);
     });
 
 

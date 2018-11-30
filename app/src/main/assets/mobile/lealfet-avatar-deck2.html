@@ -30,8 +30,8 @@ Deck 2 (Poop)
 
 
 <script>
-    var lowestHeight=3.925
-    var highestHeight=6.85
+    var lowestHeight=3.925;
+    var highestHeight=6.85;
     var pxWidth = 1844; //Width of GA cut out
     var metreWidth = (15.61*250)/100; //Width measure from GA cut out
     var factor = pxWidth/metreWidth;
@@ -76,7 +76,8 @@ Deck 2 (Poop)
     map0.on('contextmenu', function(e){
         var x=e.latlng.lng;
         var y=e.latlng.lat;
-        Android.manualLocationUpdateinPixels(x + "," + y+",3.925");
+        mapHeight=((highestHeight-lowestHeight)/2)+lowestHeight;
+        Android.manualLocationUpdateinPixels(x + "," + y+","+mapHeight);
     });
 
 </script>

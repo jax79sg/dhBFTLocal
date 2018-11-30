@@ -30,8 +30,8 @@
 
 
 <script>
-    var lowestHeight=-5.15
-    var highestHeight=-1.875
+    var lowestHeight=-5.15;
+    var highestHeight=-1.875;
 
     var gaScale = 250.0; // GA scale 1cm to 250 cm
     var pxWidth = 1844; //Width of GA cut out
@@ -78,7 +78,8 @@
     map0.on('contextmenu', function(e){
         var x=e.latlng.lng;
         var y=e.latlng.lat;
-        Android.manualLocationUpdateinPixels(x + "," + y+",-5.15");
+        mapHeight=((highestHeight-lowestHeight)/2)+lowestHeight;
+        Android.manualLocationUpdateinPixels(x + "," + y+","+mapHeight);
     });
 
 </script>

@@ -1,8 +1,6 @@
-/*___Generated_by_IDEA___*/
-
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /media/dh/DATA4TB/zz_jax/projects/dhBFTDemo/trxapi/src/main/java/com/trx/neon/binder/OnNeonEventBeta.aidl
+ * Original file: C:\\Users\\User\\StudioProjects\\dhBFTLocal\\trxapi\\src\\main\\java\\com\\trx\\neon\\binder\\OnNeonEventBeta.aidl
  */
 package com.trx.neon.binder;
 //Notice:  FEEL FREE TO BREAK BACKWARDS COMPATIBILITY HERE!

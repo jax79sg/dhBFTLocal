@@ -2,7 +2,7 @@
 
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /media/dh/DATA4TB/zz_jax/projects/dhBFTDemo/trxapi/src/main/java/com/trx/neon/binder/OnChangePostureEvent.aidl
+ * Original file: C:\\Users\\User\\StudioProjects\\dhBFTLocal\\trxapi\\src\\main\\java\\com\\trx\\neon\\binder\\OnChangePostureEvent.aidl
  */
 package com.trx.neon.binder;
 //WARNING: CHANGES TO THIS FILE MUST BE BACKWARDS COMPATIBLE.

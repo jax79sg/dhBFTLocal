@@ -34,8 +34,8 @@ android {
 
 dependencies {
     implementation 'com.navisens:motiondnaapi:1.7.3'
-//    implementation 'sg.gov.dh.utils:sg.gov.dh.utils:1.0.2'
-    implementation  project(path: ':sg.gov.dh.utils')
+    implementation 'sg.gov.dh.utils:sg.gov.dh.utils:1.0.4'
+//    implementation  project(path: ':sg.gov.dh.utils')
 
 }
 

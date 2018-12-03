@@ -19,6 +19,9 @@ public class BFTLocalPreferences {
         return Double.valueOf(this.prefs.getString(context.getResources().getString(R.string.estimoteDist),"null"));
     }
 
+    public String getLogLocation(){
+        return this.prefs.getString(context.getResources().getString(R.string.logsloc),"null");
+    }
 
     public String getBeaconAppId(){
         return this.prefs.getString(context.getResources().getString(R.string.estimoteId),"null");

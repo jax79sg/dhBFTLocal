@@ -3,7 +3,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
 def packageName = 'sg.gov.dh.trackers'
-def libraryVersion = '1.0.1'
+def libraryVersion = '1.0.2'
 
 android {
     compileSdkVersion 28
@@ -34,7 +34,9 @@ android {
 
 dependencies {
     implementation 'com.navisens:motiondnaapi:1.7.3'
-    implementation 'sg.gov.dh.utils:sg.gov.dh.utils:1.0.0'
+//    implementation 'sg.gov.dh.utils:sg.gov.dh.utils:1.0.2'
+    implementation  project(path: ':sg.gov.dh.utils')
+
 }
 
 publishing {

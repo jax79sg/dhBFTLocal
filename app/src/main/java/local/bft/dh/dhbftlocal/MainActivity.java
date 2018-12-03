@@ -36,6 +36,7 @@ import sg.gov.dh.utils.Coords;
 import sg.gov.dh.trackers.Event;
 import sg.gov.dh.trackers.NavisensLocalTracker;
 import sg.gov.dh.trackers.TrackerListener;
+import sg.gov.dh.utils.FileSaver;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     String SOUND_BEACON_DETECT="to-the-point.mp3";
     String SOUND_BEACON_DROP="drop.mp3";
     MQRabbit mqRabbit;
+    FileSaver fs;
     NavisensLocalTracker tracker;
     WebView myWebView;
     BFTLocalPreferences prefs ;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
                 updateMap(coords);
                 sendCoords(coords);
+                saveCoords(coords);
                 showCoords(coords);
             }
 
@@ -78,6 +81,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Toast.makeText(this.getApplicationContext(),"Tracker setup complete",Toast.LENGTH_LONG).show();
+    }
+
+    private void saveCoords(Coords _coords) {
+        if (fs!=null) {
+            String pattern = "yyyyMMddHHmmss";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            String date = simpleDateFormat.format(new Date());
+            try {
+                fs.write(_coords.getX() + "," + _coords.getY() + "," + _coords.getAltitude() + "," + _coords.getBearing() + "," + prefs.getName() + "," + _coords.getAction() + "," + _coords.getLatitude() + "," + date);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG,"FileSaver failed to save coords");
+            }
+        }
     }
 
 
@@ -157,13 +174,31 @@ public class MainActivity extends AppCompatActivity {
         final ImageButton beaconButton = findViewById(R.id.beaconButton);
         beaconButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                placeBeacon();
+                killmyself();
             }
         });
 
         setupMessageQueue();
+        setupFileSaver();
 
 
+    }
+
+    private void killmyself() {
+        this.finishAndRemoveTask();
+    }
+
+    private void setupFileSaver() {
+        try {
+            fs = new FileSaver(this.getApplicationContext(),prefs.getLogLocation());
+            if (fs!=null) {
+                Toast.makeText(this.getApplicationContext(), "Logging to "+prefs.getLogLocation(), Toast.LENGTH_LONG).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,"FileSaver cannot initialise");
+            Toast.makeText(this.getApplicationContext(),"FileSaver cannot initialise",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void placeBeacon() {
@@ -317,6 +352,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onDestroy() {
+        if (fs!=null){
+            try {
+                fs.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        super.onDestroy();
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -14,6 +14,18 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:key="logs_category"
+        android:title="Logs">
+
+        <EditTextPreference
+            android:defaultValue="locationlogs.csv"
+            android:key="@string/logsloc"
+            android:summary="Enter log location"
+            android:title="@string/logsloc"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="mq_category"
         android:title="MQ settings">
 

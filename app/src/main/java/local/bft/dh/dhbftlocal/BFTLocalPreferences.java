@@ -80,10 +80,11 @@ public class BFTLocalPreferences {
         floors.add(4,"lealfet-avatar-deck2.html");
         floors.add(5,"lealfet-avatar-deck3.html");
         floors.add(6,"lealfet-avatar-deck4.html");
-        floors.add(7,"lealfet-avatar-deck6.html");
-        floors.add(8,"lealfet-avatar-deck7.html");
-        floors.add(9,"lealfet-avatar-deckplatform.html");
-        floors.add(10,"lealfet-avatar-lateral.html");
+        floors.add(7,"lealfet-avatar-deck5.html");
+        floors.add(8,"lealfet-avatar-deck6.html");
+        floors.add(9,"lealfet-avatar-deck7.html");
+        floors.add(10,"lealfet-avatar-deckplatform.html");
+        floors.add(11,"lealfet-avatar-lateral.html");
     }
 
     private int getOneFloorUp()

@@ -16,7 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -33,9 +33,9 @@ android {
 }
 
 dependencies {
-    implementation 'com.navisens:motiondnaapi:1.7.3'
-    implementation 'sg.gov.dh.utils:sg.gov.dh.utils:1.0.4'
-//    implementation  project(path: ':sg.gov.dh.utils')
+    implementation 'com.navisens:motiondnaapi:1.9.2'
+//    implementation 'sg.gov.dh.utils:sg.gov.dh.utils:1.0.4'
+    implementation  project(path: ':sg.gov.dh.utils')
 
 }
 
@@ -60,8 +60,8 @@ artifactory {
             // The Artifactory repository key to publish to
             repoKey = 'libs-release-local'
 
-            username = artifactory_username
-            password = artifactory_password
+            username = "artifactory_username"
+            password = "artifactory_password"
         }
         defaults {
             // Tell the Artifactory Plugin which artifacts should be published to Artifactory.

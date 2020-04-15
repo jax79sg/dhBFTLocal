@@ -34,7 +34,7 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
     /**
      * Do not change this.
      */
-    private static final String DEVELOPER_KEY = "r1NHUejpHZSyf2tXHaTLzcfxJ1nFpWh12QRvxV9XaDVHVs8l0BqzYHJjYPyYFIKh";
+    private static final String DEVELOPER_KEY = "zcNcv8YYUYgvhgNrMZZzPNEQbcV9nAxlHhNPA9i9yNQyOmnBiveny6ZVJs6Hgsnr";
 
     /**
      * For logging purposes only

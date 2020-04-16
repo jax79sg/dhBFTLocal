@@ -33,7 +33,7 @@ public class WebAppInterface {
         Log.d(TAG,"3.manualLocationUpdateinPixels: " + pref.getMetresFromPixels(Double.parseDouble(xyz[0])) + ","+ pref.getMetresFromPixels(Double.parseDouble(xyz[1])));
 
 
-        tracker.setManualLocation(new Coords(0, 0, Double.parseDouble(xyz[2]), 0, 0,0, 0,pref.getMetresFromPixels(Double.parseDouble(xyz[0])) , pref.getMetresFromPixels(Double.parseDouble(xyz[1])), null));
+        tracker.setManualLocation(new Coords(1.3521, 103.8198, Double.parseDouble(xyz[2]), 0, 0,0, 0,pref.getMetresFromPixels(Double.parseDouble(xyz[0])) , pref.getMetresFromPixels(Double.parseDouble(xyz[1])), null));
     }
 
     @JavascriptInterface

@@ -62,16 +62,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNewCoords(Coords coords) {
 
-                Log.d(TAG,"X:"+coords.getX());
-                Log.d(TAG,"Y:"+coords.getY());
-                Log.d(TAG,"Z:"+coords.getAltitude());
-                Log.d(TAG,"bearing:"+coords.getBearing());
-                Log.d(TAG,"Action:"+coords.getAction());
-                Log.d(TAG,"RealAlt:" + coords.getLatitude());
+//                Log.d(TAG,"X:"+coords.getX());
+//                Log.d(TAG,"Y:"+coords.getY());
+//                Log.d(TAG,"Z:"+coords.getLocalAltitude());
+//                Log.d(TAG,"bearing:"+coords.getLocalBearing());
+//                Log.d(TAG,"Action:"+coords.getAction());
+//                Log.d(TAG,"RealAlt:" + coords.getLatitude());
 
                 updateMap(coords);
-                sendCoords(coords);
-                saveCoords(coords);
+//                sendCoords(coords);
+//                saveCoords(coords);
                 showCoords(coords);
             }
 
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
             String date = simpleDateFormat.format(new Date());
             try {
-                fs.write(_coords.getX() + "," + _coords.getY() + "," + _coords.getAltitude() + "," + _coords.getBearing() + "," + prefs.getName() + "," + _coords.getAction() + "," + _coords.getLatitude() + "," + date);
+                fs.write(_coords.getX() + "," + _coords.getY() + "," + _coords.getLocalAltitude() + "," + _coords.getLocalBearing() + "," + prefs.getName() + "," + _coords.getAction() + "," + _coords.getLatitude() + "," + date);
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e(TAG,"FileSaver failed to save coords");
@@ -103,15 +103,16 @@ public class MainActivity extends AppCompatActivity {
         final EditText textBearing = findViewById(R.id.textBearing);
         final EditText textAction = findViewById(R.id.textAction);
         DecimalFormat df2dec = new DecimalFormat("###.##");
-        textXYZ.setText("XYZ: " + df2dec.format(coords.getX())+"  ,  "+df2dec.format(coords.getY())+"  ,  "+df2dec.format(coords.getAltitude()));
-        textBearing.setText("Bearing: "+df2dec.format(coords.getBearing()));
-        textAction.setText("Action: " + coords.getAction());
+        DecimalFormat df6dec = new DecimalFormat("###.########");
+        textXYZ.setText("XYZ: " + df2dec.format(coords.getX())+"  ,  "+df2dec.format(coords.getY())+"  ,  "+df2dec.format(coords.getLocalAltitude()) + "  ,  "+ df6dec.format(coords.getLatitude())+"  ,  "+df6dec.format(coords.getLongitude())+"  ,  "+df2dec.format(coords.getGlobalAltitude()));
+        textBearing.setText("Bearing: "+df2dec.format(coords.getLocalBearing())+ "  ,  " +df2dec.format(coords.getGlobalBearing()));
+        textAction.setText("Action: " + coords.getAction()+","+coords.getVerticalAction());
 
     }
 
     private void updateMap(Coords coords) {
         // Android to Javascript
-        String message = coords.getX()+","+coords.getY()+","+coords.getAltitude()+","+coords.getBearing()+","+this.prefs.getName()+","+ coords.getAction();
+        String message = coords.getX()+","+coords.getY()+","+coords.getLocalAltitude()+","+coords.getLocalBearing()+","+this.prefs.getName()+","+ coords.getAction();
         Log.d(TAG,"Calling JAVASCRIPT with " + message);
         myWebView.evaluateJavascript("javascript: " +"androidToJSupdateLocation(\""+message+"\")", null);
 
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateMapOfBeacon(Coords coords, String beaconId) {
         // Android to Javascript
-        String message = coords.getX()+","+coords.getY()+","+coords.getAltitude()+","+coords.getBearing()+","+beaconId+","+ BeaconZeroing.BEACONOBJ;
+        String message = coords.getX()+","+coords.getY()+","+coords.getLocalAltitude()+","+coords.getLocalBearing()+","+beaconId+","+ BeaconZeroing.BEACONOBJ;
         Log.d(TAG,"Calling JAVASCRIPT with " + message);
         myWebView.evaluateJavascript("javascript: " +"androidToJSupdateLocation(\""+message+"\")", null);
     }
@@ -178,8 +179,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        setupMessageQueue();
-        setupFileSaver();
+//        setupMessageQueue();
+//        setupFileSaver();
 
 
     }
@@ -214,8 +215,8 @@ public class MainActivity extends AppCompatActivity {
         this.beaconZeroing.dropBeacon(coords, beaconId);
         updateMapOfBeacon(coords,beaconId);
         sendBeacon(coords,beaconId);
-        Log.d(TAG,"Placed Beacon ID " + beaconId + " on " + coords.getX() + ","+coords.getY()+","+coords.getAltitude());
-        Toast.makeText(this.getApplicationContext(),"Placed Beacon ID " + beaconId + " on " + coords.getX() + ","+coords.getY()+","+coords.getAltitude(),Toast.LENGTH_LONG).show();
+        Log.d(TAG,"Placed Beacon ID " + beaconId + " on " + coords.getX() + ","+coords.getY()+","+coords.getLocalAltitude());
+        Toast.makeText(this.getApplicationContext(),"Placed Beacon ID " + beaconId + " on " + coords.getX() + ","+coords.getY()+","+coords.getLocalAltitude(),Toast.LENGTH_LONG).show();
         try {
             playAudio(SOUND_BEACON_DROP);
         } catch (IOException e) {
@@ -236,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG,"Beacon " + beacon.getId() +  " is recognized, zeroing location");
                     Coords coord = droppedBeacon.getCoords();
 //                    coord.setAltitude(tracker.getCurrentXYZLocation().getAltitude()); //Effectively ignoring the alt info from beacon
-                    coord.setBearing(tracker.getCurrentXYZLocation().getBearing());
+                    coord.setBearing(tracker.getCurrentXYZLocation().getLocalBearing());
                     tracker.setManualLocation(coord);
 
                     try {
@@ -337,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
             String pattern = "yyyyMMddHHmmss";
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
             String date = simpleDateFormat.format(new Date());
-            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getAltitude()+","+_coords.getBearing()+","+prefs.getName()+","+_coords.getAction()+","+_coords.getLatitude()+","+date);
+            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getLocalAltitude()+","+_coords.getLocalBearing()+","+prefs.getName()+","+_coords.getAction()+","+_coords.getLatitude()+","+date);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -346,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
     private void sendBeacon(Coords _coords, String beaconId)
     {
         try {
-            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getAltitude()+","+_coords.getBearing()+","+beaconId+","+BeaconZeroing.BEACONOBJ);
+            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getLocalAltitude()+","+_coords.getLocalBearing()+","+beaconId+","+BeaconZeroing.BEACONOBJ);
         } catch (IOException e) {
             e.printStackTrace();
         }

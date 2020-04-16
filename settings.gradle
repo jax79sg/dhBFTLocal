@@ -1,1 +1,1 @@
-include ':app', ':trxapi', ':trackers', ':sg.gov.dh.mq', ':sg.gov.dh.beacons', ':sg.gov.dh.utils'
+include ':app', ':trxapi', ':sg.gov.dh.trackers', ':sg.gov.dh.mq', ':sg.gov.dh.beacons', ':sg.gov.dh.utils'

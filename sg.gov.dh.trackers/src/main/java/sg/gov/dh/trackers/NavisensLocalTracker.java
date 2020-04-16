@@ -22,14 +22,21 @@ import sg.gov.dh.utils.Coords;
 public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
 
     //Somehow need to think of a way to make these 2 variables eternal
-    double currentHeight=0.0;
+    double currentLocalHeight =0.0;
     double mapHeight=0.0;
     double newHeight=0.0;
-    double currentOffset=0.0;
-    double currentX = 0.0;
-    double currentY = 0.0;
-    double currentZ = 0.0;
-    double currentBearing = 0.0;
+    double currentLocalOffset =0.0;
+    double currentLocalX = 0.0;
+    double currentLocalY = 0.0;
+    double currentLocalZ = 0.0;
+    double currentLocalBearing = 0.0;
+    double currentGlobalLat = 0.0;
+    double currentGlobalLong = 0.0;
+    double currentGlobalAlt = 0.0;
+    double currentGlobalAltUncertainty = 0.0;
+    double currentGlobalBearing = 0.0;
+    double currentAlt = 0.0;
+
 
     /**
      * Do not change this.
@@ -51,6 +58,10 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
      */
     private static final double UPDATERATE_MS= 500.00;
 
+    /**
+     * Always get historical path, useful for track plots
+     */
+    private static final boolean GET_HISTORICAL_PATH=false;
 
     /**
      * Activity passed by the parent class (E.g. Map Provider's LocationDataSource)
@@ -115,20 +126,21 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
      */
     @Override
     public void setManualLocation(Coords coords) {
-
         double x = convertLeftToRightX(coords.getX(),coords.getY());
         double y = convertLeftToRightY(coords.getX(),coords.getY());
-        double z = coords.getAltitude();
+        double z = coords.getLocalAltitude();
         this.mapHeight=z;
-        this.currentOffset=0;
+        this.currentLocalOffset =0;
         
-        double heading = convertLeftToRightHeading(coords.getBearing());
+        double heading = convertLeftToRightHeading(coords.getLocalBearing());
 
 //        motionDnaApp.setCartesianPositionXY(coords.getX(),coords.getY());
 //        motionDnaApp.setLocalHeading(coords.getBearing());
 
         motionDnaApp.setCartesianPositionXY(x,y);
         motionDnaApp.setLocalHeading(heading);
+
+        motionDnaApp.setLocationLatitudeLongitudeAndHeadingInDegrees(coords.getLatitude(),coords.getLongitude(),coords.getGlobalBearing());
     }
 
     private double convertLeftToRightX(double x, double y) {
@@ -198,8 +210,6 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
      * @param context
      */
     public NavisensLocalTracker(Activity context){
-
-
         Log.d(TAG,"Initialising Navisens Integrator");
         this.listener = null;
         this.context=context;
@@ -215,13 +225,17 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
 
         motionDnaApp.runMotionDna(DEVELOPER_KEY);
         Log.i(TAG,"Running Navisens SDK version " + MotionDnaApplication.checkSDKVersion() + " on " + motionDnaApp.getDeviceModel());
+        motionDnaApp.setLocationNavisens();
         Log.d(TAG,"Setting update rate to " + UPDATERATE_MS + " ms");
         motionDnaApp.setCallbackUpdateRateInMs(UPDATERATE_MS);
         Log.d(TAG,"Setting power consumption to performance");
         motionDnaApp.setPowerMode(MotionDna.PowerConsumptionMode.PERFORMANCE);
-        motionDnaApp.resetLocalEstimation();
-        motionDnaApp.resetLocalHeading();
+//        motionDnaApp.setBackpropagationEnabled(GET_HISTORICAL_PATH);
+        motionDnaApp.setExternalPositioningState(MotionDna.ExternalPositioningState.HIGH_ACCURACY);
+//        motionDnaApp.resetLocalEstimation();
+//        motionDnaApp.resetLocalHeading();
         motionDnaApp.setBinaryFileLoggingEnabled(false);
+
 
     }
 
@@ -239,32 +253,62 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
 
         Log.d(TAG,"Received update from Navisens Tracker");
         MotionDna.Location loc = motionDna.getLocation();
-        String motionType=motionDna.getMotion().motionType.name();
         String locStatus=loc.locationStatus.name();
-        MotionDna.XYZ localLocation=loc.localLocation;
-        double righthandx = localLocation.x;
-        double righthandy = localLocation.y;
-        double z = localLocation.z;
-        double righthandlocalHeading = loc.localHeading;
+        Log.d(TAG,"NAVISENS status is in " + locStatus);
+        String motionType=motionDna.getMotion().motionType.name();
         String verticalMotion = loc.verticalMotionStatus.name();
 
-        double x=convertRightToLeftX(righthandx,righthandy);
-        double y=convertRightToLeftY(righthandx, righthandy);
-        double localHeading = convertRightToLeftHeading(righthandlocalHeading);
-        this.currentX=x;
-        this.currentY=y;
-        this.currentBearing=localHeading;
-        this.currentZ=this.mapHeight;
-        performTrackingHeightOffsetAdjustment(z);
-        Log.i(TAG,"X:"+x + " Y:"+y + " Z:"+z + " Heading:" + localHeading + " locStatus:"+ locStatus + "VerticalMotion:" + verticalMotion + " EstimatedMotion:" + motionType);
-        listener.onNewCoords(new Coords(z,z,this.mapHeight,localHeading,(float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, x, y, motionType));
+        if (locStatus=="NAVISENS_INITIALIZED")
+        {
+            Log.d(TAG,"NAVISENS is running in local cartesian mode");
+            //Local coordinates
+            MotionDna.XYZ localLocation=loc.localLocation;
+            double righthandx = localLocation.x;
+            double righthandy = localLocation.y;
+            double z = localLocation.z;
+            double righthandlocalHeading = loc.localHeading;
+            double x=convertRightToLeftX(righthandx,righthandy);
+            double y=convertRightToLeftY(righthandx, righthandy);
+            double localHeading = convertRightToLeftHeading(righthandlocalHeading);
+            this.currentLocalX =x;
+            this.currentLocalY =y;
+            this.currentLocalBearing =localHeading;
+            this.currentLocalZ =this.mapHeight;
+            performTrackingHeightOffsetAdjustment(z);
+
+            //Global coordinates
+            MotionDna.GlobalLocation globalLocation=loc.globalLocation;
+            this.currentGlobalLat =globalLocation.latitude;
+            this.currentGlobalLong =globalLocation.longitude;
+            this.currentGlobalAlt=loc.absoluteAltitude;
+            this.currentGlobalAltUncertainty=loc.absoluteAltitudeUncertainty;
+            this.currentGlobalBearing=loc.heading;
+
+
+        }
+        else if(locStatus=="NAVISENS_INITIALIZEDS")
+        {
+            Log.d(TAG,"NAVISENS is running in global mode");
+            //Global coordinates
+            MotionDna.GlobalLocation globalLocation=loc.globalLocation;
+            this.currentGlobalLat =globalLocation.latitude;
+            this.currentGlobalLong =globalLocation.longitude;
+            this.currentGlobalAlt=loc.absoluteAltitude;
+            this.currentGlobalAltUncertainty=loc.absoluteAltitudeUncertainty;
+        }
+
+
+        Log.i(TAG,"X:"+currentLocalX + " Y:"+currentLocalY + " Z:"+mapHeight + " Heading:" + currentLocalBearing + " locStatus:"+ locStatus + "VerticalMotion:" + verticalMotion + " EstimatedMotion:" + motionType);
+        Log.i(TAG,"Lat:"+currentGlobalLat + " Y:"+currentGlobalLong + " Z:"+currentGlobalAlt + " Heading:" + currentGlobalBearing + " locStatus:"+ locStatus + "VerticalMotion:" + verticalMotion + " EstimatedMotion:" + motionType);
+        Coords coords= new Coords(this.currentGlobalLat, this.currentGlobalLong, this.currentGlobalAlt, this.currentGlobalAltUncertainty, this.currentGlobalBearing, (float)loc.uncertainty.x,(float)loc.uncertainty.y, (float)loc.absoluteAltitudeUncertainty, currentLocalX, currentLocalY,mapHeight, currentLocalBearing, motionType, locStatus);
+        listener.onNewCoords(coords);
 
     }
 
     private void performTrackingHeightOffsetAdjustment(double z) {
-        this.currentOffset=z-this.currentHeight;
-        this.mapHeight=this.mapHeight+this.currentOffset;
-        this.currentHeight=z;
+        this.currentLocalOffset =z-this.currentLocalHeight;
+        this.mapHeight=this.mapHeight+this.currentLocalOffset;
+        this.currentLocalHeight =z;
     }
 
     private double convertRightToLeftHeading(double righthandlocalHeading) {
@@ -327,7 +371,7 @@ public class NavisensLocalTracker implements MotionDnaInterface, Tracker {
 
     public Coords getCurrentXYZLocation()
     {
-        Coords coord = new Coords(0.0, 0.0, this.currentZ, this.currentBearing, 0,0, 0, this.currentX, this.currentY, "");
+        Coords coord = new Coords(0.0, 0.0, this.currentLocalZ, this.currentLocalBearing, 0,0, 0, this.currentLocalX, this.currentLocalY, "");
         return coord;
     }
 

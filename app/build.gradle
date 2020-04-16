@@ -36,7 +36,7 @@ dependencies {
 //    implementation 'sg.gov.dh.utils:sg.gov.dh.utils:1.0.4'
     implementation  project(path: ':sg.gov.dh.utils')
 //    implementation 'sg.gov.dh.trackers:trackers:1.0.2'
-    implementation  project(path: ':trackers')
+    implementation project(path: ':sg.gov.dh.trackers')
     implementation 'com.navisens:motiondnaapi:1.7.3'
 
 //    implementation 'sg.gov.dh.mq:sg.gov.dh.mq:1.0.0'

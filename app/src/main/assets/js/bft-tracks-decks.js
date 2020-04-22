@@ -100,7 +100,8 @@ function updateTarget(message)
             map0.removeLayer(markers[i]);
             markers.splice(i,1);
 
-        if (alt>=lowestHeight && alt<=highestHeight) {
+        if (true) {
+//        if (alt>=lowestHeight && alt<=highestHeight) {
             var marker=null;
             if (action=='FORWARD'){
                 marker = getCustomMarker(x, y, 'navigating', user, true, bearing);

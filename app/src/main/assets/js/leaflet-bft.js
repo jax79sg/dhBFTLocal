@@ -24,6 +24,7 @@ function loadLeaflet(imageoverlay, lowerleftx, lowerlefty, upperrightx, upperrig
     //Horizonal zero is set at panel 0.
     //Manually measure the lowerleft and upperright boundaries of the GA cutout in metres based on above vertical zero and hori zero
     var bounds0 = [[xy(lowerleftx,lowerlefty)], [xy(upperrightx,upperrighty)]];
+    console.debug("Boundaries")
     console.debug(bounds0)
     var image0 = L.imageOverlay(imageoverlay, bounds0).addTo(map0);
 
@@ -32,7 +33,7 @@ function loadLeaflet(imageoverlay, lowerleftx, lowerlefty, upperrightx, upperrig
     // map0.setView( [5, 80], -3);
     map0.fitBounds(bounds0);
     // map0.flyTo([initialy*factor,initialx*factor],initialzoom);
-    map0.setView([initialy*factor,initialx*factor],initialzoom);
+//    map0.setView([initialy*factor,initialx*factor],initialzoom);
     return map0;
 }
 
@@ -66,7 +67,7 @@ var standingIcon = L.icon({
 function getCustomMarker(xMetres, yMetres, markerType, label, isPermanentLabel, angle){
     var icon;
     var solMarker;
-    var sol = L.latLng([ (yMetres)*factor, xMetres*factor ]);
+    var sol = L.latLng([ (yMetres), xMetres ]);
 
     if (markerType=='walking')
     {

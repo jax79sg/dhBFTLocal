@@ -74,7 +74,7 @@ public class BFTLocalPreferences {
 
         //Ground floor up
         floors.add(0,"lealfet-avatar-deck3rd.html");
-        floors.add(1,"lealfet-avatar-deck2nd.html");
+        floors.add(1,"lealfet-cec.html");
         floors.add(2,"lealfet-avatar-decktween.html");
         floors.add(3,"lealfet-avatar-maindeck.html");
         floors.add(4,"lealfet-avatar-deck2.html");

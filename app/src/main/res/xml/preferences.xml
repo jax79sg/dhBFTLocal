@@ -45,7 +45,7 @@
             android:key="@string/mqTopic"
             android:title="@string/mqTopic"
             android:summary="Enter the MQ topic everyone is using"
-            android:defaultValue="/exchange/bfttracksExchange/bfttracks"/>
+            android:defaultValue="/bfttracks"/>
 
         <EditTextPreference
             android:key="@string/mqUser"

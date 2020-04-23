@@ -64,7 +64,7 @@ public class MQRabbit {
         connFactory.setHost(host);
         connFactory.setUsername(user);
         connFactory.setPassword(password);
-        connFactory.setVirtualHost("bfttracks");
+//        connFactory.setVirtualHost("bfttracks");
         newConnection();
         return isActive();
     }

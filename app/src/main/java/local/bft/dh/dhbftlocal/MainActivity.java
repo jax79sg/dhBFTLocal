@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 //                Log.d(TAG,"RealAlt:" + coords.getLatitude());
 
                 updateMap(coords);
-//                sendCoords(coords);
+                sendCoords(coords);
 //                saveCoords(coords);
                 showCoords(coords);
             }
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        setupMessageQueue();
+        setupMessageQueue();
 //        setupFileSaver();
 
 

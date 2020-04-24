@@ -298,11 +298,13 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupMQListener()
     {
-        mqRabbit.setListener(new MQListener() {
+        mqRabbit.setListener("bfttracks", new MQListener() {
             @Override
             public void onNewMessage(String message) {
                 String[] messageArray = message.split(",");
                 String action = messageArray[5];
+                Log.d(TAG,"bfttracks MQ recieved");
+
                 if (action.equals(BeaconZeroing.BEACONREQ))
                 {
                     Log.d(TAG,"Loading Beacons to send");
@@ -330,6 +332,35 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
+        mqRabbit.setListener("remoteinit", new MQListener() {
+            @Override
+            public void onNewMessage(String message) {
+                //Message expected: deviceId,X,Y,azimuth
+                Log.d(TAG,"Remote Init MQ recieved");
+                String[] messageArray = message.split(",");
+                String deviceId = messageArray[0];
+                String x = messageArray[1];
+                String y = messageArray[2];
+                String azimuth = messageArray[3];
+
+                if (prefs.getName().toLowerCase().equals(deviceId.toLowerCase()))
+                {
+                    //The message is intended for this device.
+                    Log.d(TAG,"Remote Init request confirmed for " + deviceId);
+                    Coords coord = new Coords(0,0, 0, Double.valueOf(azimuth), 0, 0, 0, Double.valueOf(x), Double.valueOf(y), "");
+                    tracker.setManualLocation(coord);
+                }
+                else
+                {
+                    Log.d(TAG,"Remote Init request for " + deviceId + " rejected!, i am " + prefs.getName());
+                }
+
+
+            }
+        });
     }
 
     private void sendCoords(Coords _coords)
@@ -338,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
             String pattern = "yyyyMMddHHmmss";
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
             String date = simpleDateFormat.format(new Date());
-            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getLocalAltitude()+","+_coords.getLocalBearing()+","+prefs.getName()+","+_coords.getAction()+","+_coords.getLatitude()+","+date);
+            mqRabbit.sendMessage("bfttracks",_coords.getX()+","+_coords.getY()+","+_coords.getLocalAltitude()+","+_coords.getLocalBearing()+","+prefs.getName()+","+_coords.getAction()+","+_coords.getLatitude()+","+date);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -347,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
     private void sendBeacon(Coords _coords, String beaconId)
     {
         try {
-            mqRabbit.sendMessage(_coords.getX()+","+_coords.getY()+","+_coords.getLocalAltitude()+","+_coords.getLocalBearing()+","+beaconId+","+BeaconZeroing.BEACONOBJ);
+            mqRabbit.sendMessage("bfttracks",_coords.getX()+","+_coords.getY()+","+_coords.getLocalAltitude()+","+_coords.getLocalBearing()+","+beaconId+","+BeaconZeroing.BEACONOBJ);
         } catch (IOException e) {
             e.printStackTrace();
         }

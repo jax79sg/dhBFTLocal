@@ -31,17 +31,17 @@
     var lowestHeight=-2.875;
     var highestHeight=3;
     var gaScale = 400.0; // GA scale 1cm to 250 cm
-    var pxWidth = 3973; //Width of GA cut out
-    var metreWidth = (338.118*gaScale)/100; //Width measure from GA cut out
+    var pxWidth = 1800; //Width of GA cut out
+    var metreWidth = (180*gaScale)/100; //Width measure from GA cut out
     var factor = pxWidth/metreWidth;
-    var imageoverlay='../CEC.png';
+    var imageoverlay='../cecbeacon.jpg';
     var lowerleftx=0;
     var lowerlefty=0;
-    var upperrightx=338.118;
-    var upperrighty=477.945;
-    var initialx=239;
-    var initialy=169;
-    var initialzoom=-2.5;
+    var upperrightx=180;
+    var upperrighty=320;
+    var initialx=90;
+    var initialy=160;
+    var initialzoom=2.5;
     var map0=loadLeaflet(imageoverlay,lowerleftx,lowerlefty,upperrightx,upperrighty, initialx,initialy,initialzoom);
 
 

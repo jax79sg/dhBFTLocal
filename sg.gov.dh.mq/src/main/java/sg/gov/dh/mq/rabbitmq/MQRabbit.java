@@ -31,16 +31,18 @@ public class MQRabbit {
     private boolean isConnected=false;
     private boolean isActive=false;
 
-    private String queueName=null;
+    private String queueName="";
 
     private String routingKey = "123";
     private int counter=0;
 
-    private MQListener mqListener;
+    private HashMap<String, MQListener> listenerDict;
+//    private MQListener mqListener;
 
     public MQRabbit()
     {
         connFactory= new ConnectionFactory();
+        listenerDict = new HashMap<String, MQListener>();
     }
 
     public boolean connect(String host, int port, String user, String password)
@@ -86,6 +88,7 @@ public class MQRabbit {
                 channel = conn.createChannel();
             }
             createQueue("bfttracks");
+            createQueue("remoteinit");
 //            createQueue("bft");
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,23 +124,23 @@ public class MQRabbit {
 
     private void createQueue(String _queueName)
     {
-        if(queueName!=null)
+        if(queueName.contains(_queueName))
         {
             try {
-                channel.queueDelete(queueName);
-                channel.exchangeDelete(queueName+"Exchange");
+                channel.queueDelete(_queueName);
+                channel.exchangeDelete(_queueName+"Exchange");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        queueName=_queueName;
-        String exchangeName=queueName+"Exchange";
+        queueName=queueName+","+_queueName;
+        String exchangeName=_queueName+"Exchange";
         try {
             Map<String, Object> args = new HashMap<String, Object>();
             args.put("x-max-length", 10);
             channel.exchangeDeclare(exchangeName, "fanout", true);
-            channel.queueDeclare(queueName, true, false, false, args);
-            channel.queueBind(queueName, exchangeName, routingKey);
+            channel.queueDeclare(_queueName, true, false, false, args);
+            channel.queueBind(_queueName, exchangeName, routingKey);
 
 
 
@@ -148,36 +151,39 @@ public class MQRabbit {
 
     }
 
-    public void setListener(MQListener listener)
+    public void setListener(final String _queueName, MQListener listener)
     {
-        mqListener=listener;
+        listenerDict.put(_queueName,listener);
+        final MQListener mqListener=listener;
+
         Consumer consumer = new DefaultConsumer(channel){
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope,
                                        AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 String[] messageArray=message.split(",");
-                String action =messageArray[5];
+//                String action =messageArray[5];
                 Log.d(TAG," [x] Received '" + message + "'");
-                mqListener.onNewMessage(message);
+                listenerDict.get(_queueName).onNewMessage(message);
             }
         };
         try {
-            channel.basicConsume(queueName, true, consumer);
-            Log.d(TAG,"Listening to MQ Queue " + queueName);
+            channel.basicConsume(_queueName, true, consumer);
+            Log.d(TAG,"Listening to MQ Queue " + _queueName);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean sendMessage(String message) throws IOException {
+    public boolean sendMessage(String _queueName, String message) throws IOException {
         message=message+","+counter;
         counter=counter+1;
         boolean isSuccess=false;
         if (isActive) {
             byte[] messageBodyBytes = message.getBytes();
             try {
-                channel.basicPublish(queueName + "Exchange", routingKey, null, messageBodyBytes);
+                channel.basicPublish(_queueName + "Exchange", routingKey, null, messageBodyBytes);
+                Log.d(TAG,"SENDING to MQ Queue " + _queueName);
             }
             catch (Exception e)
             {
